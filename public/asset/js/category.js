@@ -3,7 +3,7 @@ $(document).ready(function() {
     var length = 0;
     var windowHeight = $(window).height();
     // console.log('windowHeight'+ windowHeight);
-    $(window).scroll(function() {  
+    $(window).scroll(function() {
         if($('#load-more').html()){
             var div_length = $('.scroll_height').length;
             if(length != div_length){
@@ -13,7 +13,7 @@ $(document).ready(function() {
                     var targetDiv = $(this);
                     // console.log(targetDiv);
                     var targetOffset = targetDiv.offset().top +50;
-                    console.log('targetOffset'+targetOffset);
+                    // console.log('targetOffset'+targetOffset);
                     if ($(window).scrollTop() + windowHeight >= targetOffset && $('.load').html()=='false') {
                         length = div_length;
                         console.log('length'+length);

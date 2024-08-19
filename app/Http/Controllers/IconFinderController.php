@@ -6,10 +6,12 @@ use Illuminate\Http\Request;
 Use App\Models\Category;
 Use App\Models\Style;
 Use App\Models\Icon;
+use Exception;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Log;
+use Imagick;
 
 class IconFinderController extends Controller
 {
@@ -35,7 +37,6 @@ class IconFinderController extends Controller
                                          ->get();
                 return $icon;
             });
-            // dd($all_icons);
             $html = view('render/category', compact('all_icons'))->render();
             return response()->json($html);
         }
@@ -54,9 +55,10 @@ class IconFinderController extends Controller
                 return $icon;
             });
             $totalRecords = $all_icons->lastPage();
+            // dd($all_icons);
         return view('iconfinder/category', compact('all_icons','totalRecords'));
     }
-    
+
     public function cat_subcategory (Request $request)
     {
        $cat_slug= $request->slug;
@@ -70,6 +72,7 @@ class IconFinderController extends Controller
     public function style_subcategory (Request $request)
     {
         $cat_slug= $request->slug;
+        // dd($cat_slug);
         $style_id=Style::select('style_id')->where('style_url_key',$cat_slug)->where('is_active','0')->where('is_deleted','0')->first();
         // dd($style_id);
         $iconsGroupedByCategory = Icon::where('style_id', $style_id ->style_id)
@@ -91,7 +94,6 @@ class IconFinderController extends Controller
     public function detail(Request $request)
     {
         if($request->ajax()){
-
             $selected_license_val = $request->input('selected_license_val');
             $selected_style_val = $request->input('selected_style_val');
             $selected_icon_val = $request->input('selected_icon_val');
@@ -105,22 +107,22 @@ class IconFinderController extends Controller
                 if($selected_license_val != "all"){
                     $Icon_dtl->where('license_id',$selected_license_val);
                 }
-            }   
+            }
             if($selected_style_val){
                 if($selected_style_val != "all"){
                     $Icon_dtl->where('style_id',$selected_style_val);
                 }
-            }   
+            }
             if($selected_icon_val){
                 if($selected_icon_val != "all"){
                     $Icon_dtl->where('icon_type_id',$selected_icon_val);
                 }
-            }   
+            }
             if($selected_sortby_val){
                 if($selected_sortby_val != "all"){
                     $Icon_dtl->where('sort_by_id',$selected_sortby_val);
                 }
-            }   
+            }
 
             $list =  $Icon_dtl->get();
             $relatedIcons = Icon::where('category_id', $sub_category->category_id)
@@ -149,6 +151,7 @@ class IconFinderController extends Controller
     public function search(Request $request)
     {
         if($request->ajax()){
+
             $selected_license_val = $request->input('selected_license_val');
             $selected_style_val = $request->input('selected_style_val');
             $selected_icon_val = $request->input('selected_icon_val');
@@ -167,27 +170,27 @@ class IconFinderController extends Controller
                     ->with(['sub_category' => function($query) {
                         $query->select('category_id', 'category_name');
                     }]);
-                
+
             if($selected_license_val){
                 if($selected_license_val != "all"){
                     $Icon_dtl->where('license_id',$selected_license_val);
                 }
-            }   
+            }
             if($selected_style_val){
                 if($selected_style_val != "all"){
                     $Icon_dtl->where('style_id',$selected_style_val);
                 }
-            }   
+            }
             if($selected_icon_val){
                 if($selected_icon_val != "all"){
                     $Icon_dtl->where('icon_type_id',$selected_icon_val);
                 }
-            }   
+            }
             if($selected_sortby_val){
                 if($selected_sortby_val != "all"){
                     $Icon_dtl->where('sort_by_id',$selected_sortby_val);
                 }
-            }   
+            }
 
             $list =  $Icon_dtl->get();
 
@@ -198,7 +201,6 @@ class IconFinderController extends Controller
         }
 
         $query = $request->input('search');
-    
         $result = Icon::where(function($q) use ($query) {
             $q->where('icon_search_key', 'LIKE', '%' . $query . '%')
               ->orWhereHas('sub_category', function($q2) use ($query) {
@@ -217,84 +219,55 @@ class IconFinderController extends Controller
             ->inRandomOrder()
             ->take(20)
             ->get();
-    
+
         return view('iconfinder.search', compact('result', 'query', 'relatedIcons'));
     }
 
     public function download(Request $request)
     {
         $url = $request->imgUrl;
-        // dd($url);
-        $active_txt = $request->active_txt;
+        $active_txt = (int) $request->active_txt;
 
         if ($url == null) {
             return back()->with('error', 'Image URL is required');
         }
 
-        // Validate URL
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
             return back()->with('error', 'Invalid Image URL');
         }
 
-        // Extract file name and extension
-        $urlParts = parse_url($url);
-        if (!$urlParts || !isset($urlParts['path'])) {
-            return back()->with('error', 'Invalid URL format');
-        }
-        $path = $urlParts['path'];
-        $filename = basename($path);
-        $extension = pathinfo($filename, PATHINFO_EXTENSION);
-
-        // Define save path
-        $savePath = public_path('Image_category/');
-
-        // Determine filename and full path based on whether size is selected or not
-        if ($active_txt != null) {
-            // Selected size case
-            $localFilename = time() . '_' . str_replace(' ', '', $active_txt) . '.' . $extension;
-        } else {
-            // Default image case
-            $localFilename = time() . '_default.' . $extension;
-        }
-
-        $fullPath = $savePath . $localFilename;
-
-        // Allowed extensions
-        $allowedExtensions = ['jpg', 'png', 'jpeg', 'svg'];
-
-        // Validate extension
-        if (!in_array(strtolower($extension), $allowedExtensions)) {
-            return back()->with('error', 'Unsupported file type');
-        }
-
-        // Ensure the directory exists
-        if (!File::isDirectory($savePath)) {
-            File::makeDirectory($savePath, 0755, true);
-        }
-
         try {
-            // Fetch the file
-            $response = Http::get($url);
-            if ($response->successful()) {
-                // Save the file
-                File::put($fullPath, $response->body());
-            } else {
-                return back()->with('error', 'Failed to download the image');
+            $contents = @file_get_contents($url);
+            if ($contents === false) {
+                return back()->with('error', 'Failed to retrieve image from URL');
             }
-        } catch (\Exception $e) {
-            return back()->with('error', 'Failed to download the image: ' . $e->getMessage());
-        }
 
-        // Provide the file for download
-        if (File::exists($fullPath)) {
-            Log::info('File saved successfully: ' . $fullPath);
+            $name = basename(parse_url($url, PHP_URL_PATH));
+            $actualname = pathinfo($name, PATHINFO_FILENAME);
 
-            // Return the file as a download response
-            return response()->download($fullPath, $filename)->deleteFileAfterSend(true);
-        } else {
-            return back()->with('error', 'Failed to save the image file');
+            //Convert into PNG
+            $image = new Imagick();
+            $image->readImageBlob($contents);
+            $image->setResolution(1024, 1024);
+            $image->setImageFormat('png');
+
+            //Convert into Selected Size
+            $resizedImage = clone $image;
+            $resizedImage->resizeImage($active_txt, $active_txt, Imagick::FILTER_LANCZOS, 1);
+
+            $directoryPath = public_path('Image_category');
+            if (!file_exists($directoryPath)) {
+                mkdir($directoryPath, 0755, true);
+            }
+
+            $outputPath = $directoryPath . '/' . $actualname . '.png';
+            $image->writeImage($outputPath);
+            $resizedImage->writeImage($outputPath);
+            $resizedImage->destroy(); // Clean up memory
+            return Response::download($outputPath,$name);
+        } catch (Exception $e) {
+            return back()->with('error', 'An error occurred while processing the image: ' . $e->getMessage());
         }
     }
-
 
 }

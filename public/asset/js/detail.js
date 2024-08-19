@@ -32,7 +32,7 @@ function attachCardClickHandler() {
       $('#modal-icon-name').text(iconName);
 
       $('#image_down input[name="imgslug"]').val(iconUrl);
-    
+
       if (!$('#exampleModal').hasClass('show')) {
         var modal = new bootstrap.Modal(document.getElementById('exampleModal'));
         modal.show();
@@ -126,7 +126,7 @@ $(document).ready(function() {
                 if (response) {
                     $('#filter_res').empty();
                     $('#filter_res').append(response);
-                    attachCardClickHandler();  
+                    attachCardClickHandler();
                 } else {
                     $('#filter_res').empty();
                     $('#filter_res').append(
@@ -216,5 +216,5 @@ function copyImageURL(imageURL) {
   } else {
     toastr.error('Failed to copy image URL.');
   }
-  
+
 }

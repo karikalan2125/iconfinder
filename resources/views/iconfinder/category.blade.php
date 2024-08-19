@@ -18,7 +18,7 @@
                                 <div class="row">
                                 @foreach($row->random_icons as $rows)
                                     <div class="col-6 text-center pb-5"><img src="{{ $rows->icon_url }}" alt="icons"></div>
-                                @endforeach 
+                                @endforeach
                                 </div>
                             </div>
                         </div>
@@ -31,7 +31,7 @@
         </div>
     </div>
 </section>
-@endsection 
+@endsection
 @section('customscript')
 <script>
     var baseUrl = "{{ url('/') }}";

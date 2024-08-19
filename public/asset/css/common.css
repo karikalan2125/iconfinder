@@ -1,4 +1,4 @@
-html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, 
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i,
 center, dl, dt, dd,  fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
 	margin:0;
 	padding:0;
@@ -73,7 +73,7 @@ a{
         outline: 0;
         border:#fff;
     }
-    .col-xl-5 
+    .col-xl-5
     {
         .form-control{
             border-top: 1px solid #7c80ff;
@@ -94,7 +94,7 @@ a{
         display: block;
         transition: display 0.3s ease-in-out;
     }
-   
+
 }
 .jkfrjhqwd{
     display: none;
@@ -117,7 +117,7 @@ a{
         padding-left: 10px;
         padding-right: 10px;
         padding-top: 7px;
-        padding-bottom: 7px; 
+        padding-bottom: 7px;
        background-color: #fb3;
        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.1);
     }
@@ -136,7 +136,7 @@ a{
         padding-left: 10px;
         padding-right: 10px;
         padding-top: 7px;
-        padding-bottom: 7px; 
+        padding-bottom: 7px;
        background-color: #fb3;
        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.1);
     }
@@ -180,17 +180,17 @@ border-radius: 3px;
         .cards {
             padding: 20px; /* default padding */
         }
-        
+
         .premium-card {
             padding-top: 3px !important;
             padding-right: 8px !important;
         }
-        
+
         .premium-card .premium {
             height: 20px !important;
             width: 20px !important;
         }
-        
+
     }
     .scroll-bdy{
         overflow-y: scroll;
@@ -231,7 +231,7 @@ border-radius: 3px;
             img{
                 width: 45px;
                 height: 45px;
-            } 
+            }
         }
         .owl-theme .owl-prev, .owl-theme .owl-next {
             position: absolute;
@@ -258,17 +258,17 @@ border-radius: 3px;
         .cards {
             padding: 20px; /* default padding */
         }
-        
+
         .premium-card {
             padding-top: 3px !important;
             padding-right: 8px !important;
         }
-        
+
         .premium-card .premium {
             height: 20px !important;
             width: 20px !important;
         }
-        
+
     }
     .modal{
         --bs-modal-width: 921px!important;
@@ -291,7 +291,7 @@ border-radius: 3px;
             img{
                 width: 45px;
                 height: 45px;
-            } 
+            }
         }
         .owl-theme .owl-prev, .owl-theme .owl-next {
             position: absolute;
@@ -330,7 +330,7 @@ border-radius: 3px;
     border-radius: 50%;
     color: #fff;
 }
-  
+
 #scroll-to-top:hover {
     background-color: #4171f7;
 }
@@ -355,10 +355,10 @@ border-radius: 3px;
         font-size: 17px!important;
     }
     h5{
-        font-size: 15px!important; 
+        font-size: 15px!important;
     }
     h6{
-        font-size: 14px!important; 
+        font-size: 14px!important;
     }
     .header {
         height: 311px !important;

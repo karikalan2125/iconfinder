@@ -83,7 +83,7 @@
         </div>
     </div>
 </section>
-@endsection 
+@endsection
 @section('customscript')
 <script>
     var result='{{$query}}';

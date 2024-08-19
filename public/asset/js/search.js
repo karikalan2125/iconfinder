@@ -126,7 +126,7 @@ $(document).ready(function() {
               if (response) {
                   $('#filter_res').empty();
                   $('#filter_res').append(response);
-                  attachCardClickHandler();  
+                  attachCardClickHandler();
               } else {
                   $('#filter_res').empty();
                   $('#filter_res').append(
