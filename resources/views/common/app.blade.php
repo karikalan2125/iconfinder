@@ -5,6 +5,7 @@
     @include('common.topcss')
     <link href="" rel="icon">
     <link href="" rel="apple-touch-icon">
+    @yield('customcss')
 </head>
 <body>
     @include('common.navbar')

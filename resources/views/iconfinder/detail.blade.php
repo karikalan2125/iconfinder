@@ -35,7 +35,7 @@
                             </div>
                             <div class="modal-body">
                                 <div class="row">
-                                    <div class="col-xl-5 col-lg-5 col-md-4 col-sm-4 col-12 text-center pb-3">
+                                    <div class="col-xl-5 col-lg-5 col-md-4 col-sm-4 col-12 text-center pb-3" id="size">
                                         <img id="modal-icon-img" src="" alt="" class="detail-img">
                                     </div>
                                     <div class="col-xl-7 col-lg-7 col-md-8 col-sm-8 col-12 align-self-center">
@@ -68,15 +68,30 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="d-flex gap-3 pt-3">
-                                            <div class="card cardd border-0 py-2 rounded-0 cursor" id="download" data-img="{{ $Icon_dtl->icon_url }}">
+                                        <div class="d-flex gap-3 pt-3" id="downloadicons">
+                                            <div class="card cardd border-0 py-2 rounded-0 cursor" id="downloadpng" data-img="{{ $Icon_dtl->icon_url }}">
                                                 <div class="d-flex text-white justify-content-center">
-                                                    <i class="fas fa-download"></i>
+                                                    <i class="fa-solid fa-file-image"></i>
                                                     <span class="ps-2 font-sz">DOWNLOAD AS PNG</span>
                                                 </div>
                                             </div>
-                                            <div class="card  cardd border-0 py-2 rounded-0" onclick="copyImageURL('{{ $Icon_dtl->icon_url }}')">
-                                                <span class="font-sz text-white text-center">COPY</span>
+                                            <div class="card cardd border-0 py-2 rounded-0 cursor" id="downloadjpeg" data-img="{{ $Icon_dtl->icon_url }}">
+                                                <div class="d-flex text-white justify-content-center">
+                                                    <i class="fa-solid fa-file-image"></i>
+                                                    <span class="ps-2 font-sz">DOWNLOAD AS JPEG</span>
+                                                </div>
+                                            </div>
+                                            <div class="card cardd border-0 py-2 rounded-0 cursor" id="downloadsvg" data-img="{{ $Icon_dtl->icon_url }}">
+                                                <div class="d-flex text-white justify-content-center">
+                                                    <i class="fas fa-download"></i>
+                                                    <span class="ps-2 font-sz">DOWNLOAD AS SVG</span>
+                                                </div>
+                                            </div>
+                                            <div class="card  cardd border-0 py-2 rounded-0 cursor" onclick="copyImageURL('{{ $Icon_dtl->icon_url }}')">
+                                                <div class="d-flex text-white justify-content-center">
+                                                    <i class="fa-regular fa-copy"></i>
+                                                    <span class="ps-2 font-sz">COPY LINK</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -113,3 +128,4 @@
 </script>
 <script src="{{asset('asset/js/detail.js')}}"></script>
 @endsection
+

@@ -203,14 +203,48 @@ border-radius: 3px;
         --bs-modal-width: 921px!important;
     }
     .modal-body{
-        .detail-img{
-            width: 200px;
-            height: 200px;
+
+       #size {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300px; /* Set a fixed height */
+        }
+
+        .detail-img {
+            max-width: 100%;
+            height: auto;
+        }
+
+
+        #downloadicons{
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-evenly;
         }
         .cardd{
             background-color: #4285f4;
             box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
             width: 190px;
+            text-align: center;
+        }
+        .cardd:hover{
+            background-color: #2f6cce;
+        }
+        .cardd:nth-child(3){
+            background-color: #D4403A;
+        }
+        .cardd:nth-child(3):hover{
+            background-color: #c02621;
+        }
+        .cardd:nth-child(4){
+            background-color: #3A833A;
+        }
+        .cardd:nth-child(4):hover{
+            background-color: #396e39;
+        }
+        .row{
+            justify-content: center;
         }
         .JKNEAF {
             .active{
@@ -221,6 +255,10 @@ border-radius: 3px;
             .card{
                 width: 70px;
                 cursor: pointer;
+            }
+
+            .card:hover{
+                background-color: rgb(168, 168, 168);
             }
         }
     }
@@ -284,6 +322,7 @@ border-radius: 3px;
             width: 190px;
         }
     }
+
     .related-icons{
         .card{
             background-color: rgb(248, 248, 248)!important;

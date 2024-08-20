@@ -36,10 +36,18 @@ function attachCardClickHandler() {
       if (!$('#exampleModal').hasClass('show')) {
         var modal = new bootstrap.Modal(document.getElementById('exampleModal'));
         modal.show();
+        let active_txt = '256px';
+        let sizeInPx = parseInt(active_txt);  // Convert size to integer
+        $('#modal-icon-img').css({
+            'width': sizeInPx + 'px',
+            'height': sizeInPx + 'px'
+        });
       }
   });
 }
 attachCardClickHandler();
+
+
 
 // Filter function
 $(document).ready(function() {
@@ -148,35 +156,140 @@ $(document).ready(function() {
 // image download
 
 $(document).ready(function() {
-  let active_txt = '';
+  let active_txt = '256px';
 
   // Handle click on size cards
   $(".JKNEAF .card").click(function() {
       $(".JKNEAF .card").removeClass("active");
       $(this).addClass("active");
       active_txt = $('.active span').text().trim();
+
+      let sizeInPx = parseInt(active_txt);  // Convert size to integer
+        $('#modal-icon-img').css({
+            'width': sizeInPx + 'px',
+            'height': sizeInPx + 'px'
+        });
   });
+
+  $("#exampleModal").on("hide.bs.modal", function () {
+    active_txt = '256px';  // Reset active_txt to default value
+    $(".JKNEAF .card").removeClass("active");  // Remove the active class from all cards
+    $('#modal-icon-img').css({
+        'width': active_txt,
+        'height': active_txt
+    });
+});
 
   // Handle click on the download button
-  $("#download").click(function() {
-      var imgUrl = $(this).data('img');
-      var url = base_url + 'download_icon';
+  $("#downloadpng").click(function() {
+    //   var imgUrl = $(this).data('img');
+    // //   var url = base_url + 'download_icon';
+    // var url = base_url + 'download_icon?imgUrl=' + encodeURIComponent(imgUrl) + '&active_txt=' + active_txt;
+    // window.location.href = url;
+    var imgUrl = $(this).data('img');
+    var format='png';
+    var url = base_url + 'download_icon?imgUrl=' + encodeURIComponent(imgUrl) + '&active_txt=' + active_txt + '&format=' + format;
+    // Create a temporary link element
+    var link = document.createElement('a');
+    link.href = url;
 
-      $.ajax({
-        type: "get",
-        url: url,
-        dataType: 'json',
-        data: {
-          'imgUrl': imgUrl,
-          'active_txt': active_txt
-        },
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        success: function(response) {
-        },
-        error: function(error) {
-        }
-      });
+    // Append the link to the body (necessary for Firefox)
+    document.body.appendChild(link);
+
+    // Simulate a click on the link
+    link.click();
+
+    // Remove the link from the document
+    document.body.removeChild(link);
+    //   $.ajax({
+    //     type: "get",
+    //     url: url,
+    //     dataType: 'json',
+    //     data: {
+    //       'imgUrl': imgUrl,
+    //       'active_txt': active_txt
+    //     },
+    //     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+    //     success: function(response) {
+    //     },
+    //     error: function(error) {
+    //     }
+    //   });
   });
+
+  $("#downloadjpeg").click(function() {
+    //   var imgUrl = $(this).data('img');
+    // //   var url = base_url + 'download_icon';
+    // var url = base_url + 'download_icon?imgUrl=' + encodeURIComponent(imgUrl) + '&active_txt=' + active_txt;
+    // window.location.href = url;
+    var imgUrl = $(this).data('img');
+    var format='jpeg';
+    var url = base_url + 'download_icon?imgUrl=' + encodeURIComponent(imgUrl) + '&active_txt=' + active_txt + '&format=' + format;
+    // Create a temporary link element
+    var link = document.createElement('a');
+    link.href = url;
+
+    // Append the link to the body (necessary for Firefox)
+    document.body.appendChild(link);
+
+    // Simulate a click on the link
+    link.click();
+
+    // Remove the link from the document
+    document.body.removeChild(link);
+    //   $.ajax({
+    //     type: "get",
+    //     url: url,
+    //     dataType: 'json',
+    //     data: {
+    //       'imgUrl': imgUrl,
+    //       'active_txt': active_txt
+    //     },
+    //     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+    //     success: function(response) {
+    //     },
+    //     error: function(error) {
+    //     }
+    //   });
+  });
+
+  $("#downloadsvg").click(function() {
+    //   var imgUrl = $(this).data('img');
+    // //   var url = base_url + 'download_icon';
+    // var url = base_url + 'download_icon?imgUrl=' + encodeURIComponent(imgUrl) + '&active_txt=' + active_txt;
+    // window.location.href = url;
+    var imgUrl = $(this).data('img');
+    var format='svg';
+    var url = base_url + 'download_icon?imgUrl=' + encodeURIComponent(imgUrl) + '&active_txt=' + active_txt + '&format=' + format;
+    // Create a temporary link element
+    var link = document.createElement('a');
+    link.href = url;
+
+    // Append the link to the body (necessary for Firefox)
+    document.body.appendChild(link);
+
+    // Simulate a click on the link
+    link.click();
+
+    // Remove the link from the document
+    document.body.removeChild(link);
+    //   $.ajax({
+    //     type: "get",
+    //     url: url,
+    //     dataType: 'json',
+    //     data: {
+    //       'imgUrl': imgUrl,
+    //       'active_txt': active_txt
+    //     },
+    //     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+    //     success: function(response) {
+    //     },
+    //     error: function(error) {
+    //     }
+    //   });
+  });
+
+
 });
 
 
@@ -204,17 +317,12 @@ function copyImageURL(imageURL) {
     toastr.error('No image URL provided!');
     return;
   }
-  var inputElement = document.createElement('input');
-  inputElement.value = imageURL;
-  document.body.appendChild(inputElement);
-  inputElement.select();
-  var successful = document.execCommand('copy');
-  document.body.removeChild(inputElement);
-
-  if (successful) {
-    toastr.success('Image URL copied to clipboard!');
-  } else {
-    toastr.error('Failed to copy image URL.');
-  }
-
+  // Use Clipboard API
+  navigator.clipboard.writeText(imageURL)
+    .then(function() {
+      toastr.success('Image URL copied to clipboard!');
+    })
+    .catch(function() {
+      toastr.error('Failed to copy image URL.');
+    });
 }

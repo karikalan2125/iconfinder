@@ -7,11 +7,10 @@ Use App\Models\Category;
 Use App\Models\Style;
 Use App\Models\Icon;
 use Exception;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Imagick;
+use ImagickPixel;
 
 class IconFinderController extends Controller
 {
@@ -226,48 +225,161 @@ class IconFinderController extends Controller
     public function download(Request $request)
     {
         $url = $request->imgUrl;
+        // dd($url);
         $active_txt = (int) $request->active_txt;
+        $format=$request->format;
+        // dd($format);
 
-        if ($url == null) {
-            return back()->with('error', 'Image URL is required');
-        }
+        switch ($format){
+            case 'png':
+                if ($url == null) {
+                    return back()->with('error', 'Image URL is required');
+                }
 
-        if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            return back()->with('error', 'Invalid Image URL');
-        }
+                if (!filter_var($url, FILTER_VALIDATE_URL)) {
+                    return back()->with('error', 'Invalid Image URL');
+                }
 
-        try {
-            $contents = @file_get_contents($url);
-            if ($contents === false) {
-                return back()->with('error', 'Failed to retrieve image from URL');
+                try {
+                    $contents = @file_get_contents($url);
+                    if ($contents === false) {
+                        return back()->with('error', 'Failed to retrieve image from URL');
+                    }
+
+                    $name = basename(parse_url($url, PHP_URL_PATH));
+                    $actualname = pathinfo($name, PATHINFO_FILENAME);
+
+                    //Convert into PNG
+                    $image = new Imagick();
+                    $image->setBackgroundColor(new ImagickPixel('transparent'));
+                    $image->readImageBlob($contents);
+                    $image->setResolution(1024, 1024);
+                    $image->setImageFormat('png');
+
+                    //Convert into Selected Size
+                    $resizedImage = clone $image;
+                    $resizedImage->resizeImage($active_txt, $active_txt, Imagick::FILTER_LANCZOS, 1);
+
+                    $directoryPath = Storage::path('/Image_category');
+                    if (!file_exists($directoryPath)) {
+                        mkdir($directoryPath, 0755, true);
+                    }
+
+                    $outputPath =  $directoryPath . '/' . $actualname . '.png';
+                    // dd($outputPath);
+                    $resizedImage->writeImage($outputPath);
+
+                    // Clean up memory
+                    $image->destroy();
+                    $resizedImage->destroy();
+
+                    // Generate a unique filename for download
+                    $newname = $actualname . '_' . time() . '.png';
+                    $headers = ['Content-Type: image/png'];
+
+                    return response()->download($outputPath,$newname,$headers);
+                } catch (Exception $e) {
+                    return back()->with('error', 'An error occurred while processing the image: ' . $e->getMessage());
+                }
+            case 'jpeg':
+                if ($url == null) {
+                    return back()->with('error', 'Image URL is required');
+                }
+
+                if (!filter_var($url, FILTER_VALIDATE_URL)) {
+                    return back()->with('error', 'Invalid Image URL');
+                }
+
+                try {
+                    $contents = @file_get_contents($url);
+                    if ($contents === false) {
+                        return back()->with('error', 'Failed to retrieve image from URL');
+                    }
+
+                    $name = basename(parse_url($url, PHP_URL_PATH));
+                    $actualname = pathinfo($name, PATHINFO_FILENAME);
+
+                    //Convert into PNG
+                    $image = new Imagick();
+                    $image->setBackgroundColor(new ImagickPixel('white'));
+                    $image->readImageBlob($contents);
+                    $image->setResolution(1024, 1024);
+                    $image->setImageFormat('jpeg');
+
+                    //Convert into Selected Size
+                    $resizedImage = clone $image;
+                    $resizedImage->resizeImage($active_txt, $active_txt, Imagick::FILTER_LANCZOS, 1);
+
+                    $directoryPath = Storage::path('/Image_category');
+                    // dd($directoryPath);
+                    if (!file_exists($directoryPath)) {
+                        mkdir($directoryPath, 0755, true);
+                    }
+
+                    $outputPath =  $directoryPath . '/' . $actualname . '.jpeg';
+                    // dd($outputPath);
+                    $resizedImage->writeImage($outputPath);
+
+                    // Clean up memory
+                    $image->destroy();
+                    $resizedImage->destroy();
+
+                    // Generate a unique filename for download
+                    $newname = $actualname . '_' . time() . '.jpeg';
+                    $headers = ['Content-Type: image/jpeg'];
+                    // $down=response()->download($outputPath,$newname,$headers);
+                    // dd($down);
+                    return response()->download($outputPath,$newname,$headers);
+                } catch (Exception $e) {
+                    return back()->with('error', 'An error occurred while processing the image: ' . $e->getMessage());
+                }
+            case 'svg':
+                    if ($url == null) {
+                        return back()->with('error', 'Image URL is required');
+                    }
+
+                    if (!filter_var($url, FILTER_VALIDATE_URL)) {
+                        return back()->with('error', 'Invalid Image URL');
+                    }
+
+                    try {
+                        $contents = @file_get_contents($url);
+                        if ($contents === false) {
+                            return back()->with('error', 'Failed to retrieve image from URL');
+                        }
+
+                        $name = basename(parse_url($url, PHP_URL_PATH));
+                        $actualname = pathinfo($name, PATHINFO_FILENAME);
+
+                        // Create a new Imagick instance
+                        // $image = new Imagick();
+                        // $image->readImageBlob($contents);  // Read the SVG contents directly
+
+                        // // Optional: You can resize the SVG if needed
+                        // $image->resizeImage($active_txt, $active_txt, Imagick::FILTER_LANCZOS, 1);
+
+                        // Ensure directory exists
+                        $directoryPath = Storage::path('/svg');
+                        if (!file_exists($directoryPath)) {
+                            mkdir($directoryPath, 0755, true);
+                        }
+
+                        $outputPath =  $directoryPath . '/' . $actualname . '.svg';
+                        // $image->writeImage($outputPath);  // Save the image as SVG
+
+                        // // Clean up memory
+                        // $image->destroy();
+
+                        // Generate a unique filename for download
+                        $newname = $actualname . '_' . time() . '.svg';
+                        $headers = ['Content-Type: image/svg+xml'];
+
+                        return response()->download($outputPath, $newname, $headers);
+
+                    } catch (Exception $e) {
+                        return back()->with('error', 'An error occurred while processing the image: ' . $e->getMessage());
+                    }
             }
-
-            $name = basename(parse_url($url, PHP_URL_PATH));
-            $actualname = pathinfo($name, PATHINFO_FILENAME);
-
-            //Convert into PNG
-            $image = new Imagick();
-            $image->readImageBlob($contents);
-            $image->setResolution(1024, 1024);
-            $image->setImageFormat('png');
-
-            //Convert into Selected Size
-            $resizedImage = clone $image;
-            $resizedImage->resizeImage($active_txt, $active_txt, Imagick::FILTER_LANCZOS, 1);
-
-            $directoryPath = public_path('Image_category');
-            if (!file_exists($directoryPath)) {
-                mkdir($directoryPath, 0755, true);
-            }
-
-            $outputPath = $directoryPath . '/' . $actualname . '.png';
-            $image->writeImage($outputPath);
-            $resizedImage->writeImage($outputPath);
-            $resizedImage->destroy(); // Clean up memory
-            return Response::download($outputPath,$name);
-        } catch (Exception $e) {
-            return back()->with('error', 'An error occurred while processing the image: ' . $e->getMessage());
-        }
     }
 
 }
