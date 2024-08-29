@@ -1,6 +1,5 @@
 <section class="filter">
-    <h4 class="fw-bold ps-4 py-3">Filter</h4>
-    
+    <h4 class="fw-bold ps-4 py-3">Filter</h4>   
     <div>
         <h5 class="font-blue fw-bold text-center py-4">License</h5>
         <div class="ps-4">
@@ -12,7 +11,7 @@
                     </label>
                 </div>
                 @foreach ($license as $index => $row)
-                <div class="form-check pb-3 ">
+                <div class="form-check pb-3  ">
                     <input class="form-check-input cursor" value="{{$row->license_id}}" data-slug="{{$row->license_name}}" type="radio" name="flexRadioDefault" id="{{$row->license_name}}">
                     <label class="form-check-label cursor" for="{{$row->license_name}}">
                         {{ $row->license_name }}
@@ -130,7 +129,7 @@
             @if(isset($style) && !empty($style))
                 @foreach ($style as $index => $row)
                 <div class="form-check pb-3">
-                    <input class="form-check-input" type="radio" name="Style" id="Style{{ $index }}" 
+                    <input class="form-check-input" type="radio" name="Style" id="Style{{ $index }}"
                         @if ($index == 0) checked @endif>
                     <label class="form-check-label" for="Style{{ $index }}">
                         {{ $row->style_name }}

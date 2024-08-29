@@ -169,7 +169,7 @@ class IconFinderController extends Controller
                     ->with(['sub_category' => function($query) {
                         $query->select('category_id', 'category_name');
                     }]);
-
+                    // dd($Icon_dtl);
             if($selected_license_val){
                 if($selected_license_val != "all"){
                     $Icon_dtl->where('license_id',$selected_license_val);
@@ -200,7 +200,7 @@ class IconFinderController extends Controller
         }
 
         $query = $request->input('search');
-        $result = Icon::where(function($q) use ($query) {
+        $Icon_dtl = Icon::where(function($q) use ($query) {
             $q->where('icon_search_key', 'LIKE', '%' . $query . '%')
               ->orWhereHas('sub_category', function($q2) use ($query) {
                   $q2->where('category_name', 'LIKE', '%' . $query . '%');
@@ -212,14 +212,14 @@ class IconFinderController extends Controller
                 $query->select('category_id', 'category_name');
             }])
             ->get();
-
+            // dd($Icon_dtl->icon_url);
         $relatedIcons = Icon::where('is_active', '0')
             ->where('is_deleted', '0')
             ->inRandomOrder()
             ->take(20)
             ->get();
 
-        return view('iconfinder.search', compact('result', 'query', 'relatedIcons'));
+        return view('iconfinder.search', compact('Icon_dtl', 'query', 'relatedIcons'));
     }
 
     public function download(Request $request)
@@ -228,6 +228,7 @@ class IconFinderController extends Controller
         // dd($url);
         $active_txt = (int) $request->active_txt;
         $format=$request->format;
+        $color=$request->color;
         // dd($format);
 
         switch ($format){
@@ -245,7 +246,10 @@ class IconFinderController extends Controller
                     if ($contents === false) {
                         return back()->with('error', 'Failed to retrieve image from URL');
                     }
-
+                    if ($color) {
+                        $contents = preg_replace('/#000000/', $color, $contents); // Replace black with selected color
+                        // dd($color);
+                    }
                     $name = basename(parse_url($url, PHP_URL_PATH));
                     $actualname = pathinfo($name, PATHINFO_FILENAME);
 
@@ -255,10 +259,10 @@ class IconFinderController extends Controller
                     $image->readImageBlob($contents);
                     $image->setResolution(1024, 1024);
                     $image->setImageFormat('png');
-
                     //Convert into Selected Size
                     $resizedImage = clone $image;
                     $resizedImage->resizeImage($active_txt, $active_txt, Imagick::FILTER_LANCZOS, 1);
+
 
                     $directoryPath = Storage::path('/Image_category');
                     if (!file_exists($directoryPath)) {
@@ -275,7 +279,9 @@ class IconFinderController extends Controller
 
                     // Generate a unique filename for download
                     $newname = $actualname . '_' . time() . '.png';
-                    $headers = ['Content-Type: image/png'];
+                    $headers = ['Content-Type: image/png',
+                    'Content-Disposition' => 'attachment; filename="' . $actualname . '.png"'  // Force download with the actual name
+                    ];
 
                     return response()->download($outputPath,$newname,$headers);
                 } catch (Exception $e) {
@@ -294,6 +300,10 @@ class IconFinderController extends Controller
                     $contents = @file_get_contents($url);
                     if ($contents === false) {
                         return back()->with('error', 'Failed to retrieve image from URL');
+                    }
+                    if ($color) {
+                        $contents = preg_replace('/#000000/', $color, $contents); // Replace black with selected color
+                        // dd($color);
                     }
 
                     $name = basename(parse_url($url, PHP_URL_PATH));
@@ -326,7 +336,9 @@ class IconFinderController extends Controller
 
                     // Generate a unique filename for download
                     $newname = $actualname . '_' . time() . '.jpeg';
-                    $headers = ['Content-Type: image/jpeg'];
+                    $headers = ['Content-Type: image/jpeg',
+                    'Content-Disposition' => 'attachment; filename="' . $actualname . '.jpeg"'  // Force download with the actual name
+                    ];
                     // $down=response()->download($outputPath,$newname,$headers);
                     // dd($down);
                     return response()->download($outputPath,$newname,$headers);
@@ -343,14 +355,23 @@ class IconFinderController extends Controller
                     }
 
                     try {
+
                         $contents = @file_get_contents($url);
                         if ($contents === false) {
                             return back()->with('error', 'Failed to retrieve image from URL');
                         }
+                        if ($color) {
+                            if (strtolower($color) === '#ffffff' || strtolower($color) === '#fff') {
+                                // Add a black background if color is white
+                                $backgroundSvg = '<rect width="100%" height="100%" fill="black"/>';
+                                $contents = preg_replace('/<svg([^>]+)>/', '<svg$1>' . $backgroundSvg, $contents);
+                            }
+                            $contents = preg_replace('/#000000/', $color, $contents); // Replace black with selected color
+                        }
 
                         $name = basename(parse_url($url, PHP_URL_PATH));
                         $actualname = pathinfo($name, PATHINFO_FILENAME);
-
+                        // dd($actualname);
                         // Create a new Imagick instance
                         // $image = new Imagick();
                         // $image->readImageBlob($contents);  // Read the SVG contents directly
@@ -360,19 +381,25 @@ class IconFinderController extends Controller
 
                         // Ensure directory exists
                         $directoryPath = Storage::path('/svg');
+
                         if (!file_exists($directoryPath)) {
                             mkdir($directoryPath, 0755, true);
                         }
 
                         $outputPath =  $directoryPath . '/' . $actualname . '.svg';
                         // $image->writeImage($outputPath);  // Save the image as SVG
-
+                        // dd($outputPath);
                         // // Clean up memory
                         // $image->destroy();
 
+                        // Save the SVG content
+                        file_put_contents($outputPath, $contents);
                         // Generate a unique filename for download
                         $newname = $actualname . '_' . time() . '.svg';
-                        $headers = ['Content-Type: image/svg+xml'];
+                        $headers = ['Content-Type: image/jpeg',
+                        'Content-Type' => 'image/svg+xml', // Adjust the MIME type if necessary
+                        'Content-Disposition' => 'attachment; filename="' . $newname . 'svg' // Force download with the actual name
+                        ];
 
                         return response()->download($outputPath, $newname, $headers);
 

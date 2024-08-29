@@ -39,4 +39,5 @@
         </div>
     </div>
 </section>
-@endsection 
+<div id = "loading_indicator"> </div>
+@endsection

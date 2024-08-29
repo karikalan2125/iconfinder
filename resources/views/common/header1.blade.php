@@ -2,7 +2,9 @@
     <div class="container">
         <div class="row justify-content-center align-self-center py-5">
             <div class="col-xl-8 col-lg-8 col-md-10 col-sm-10 col-11 align-slef-center text-center pt-5">
-                <h1 class="text-white fw-bold">Access 3,960,500 vector icons</h1>
+                <h1 class="text-white fw-bold">
+                    Access <span id="icon-count">3,960,500</span> vector icons
+                  </h1>
                 <h5 class="text-white py-xl-4 py-lg-4 py-md-4 py-sm-3  py-3">The largest database of free icons available in PNG, SVG, EPS, PSD</h5>
                 <div class="w-100 position-relative" role="search" id="search">
                 <form autocomplete="off" method="get" action="{{ route('icons.search') }}">
@@ -55,3 +57,27 @@
         </div>
     </div>
 </div>
+<script>
+
+document.addEventListener("DOMContentLoaded", function() {
+    const element = document.getElementById('icon-count');
+    const targetNumber = 3960500;
+    const duration = 1500; // duration of the animation in milliseconds
+    const frameRate = 60; // frames per second
+    const increment = targetNumber / (duration / (1000 / frameRate));
+
+    let currentNumber = 0;
+
+    const updateCount = () => {
+      currentNumber += increment;
+      if (currentNumber < targetNumber) {
+        element.textContent = Math.floor(currentNumber).toLocaleString();
+        requestAnimationFrame(updateCount);
+      } else {
+        element.textContent = targetNumber.toLocaleString();
+      }
+    };
+
+    updateCount();
+  });
+</script>

@@ -7,10 +7,11 @@
     <link href="" rel="apple-touch-icon">
     @yield('customcss')
 </head>
-<body>
+<body class="hidden-body">
     @include('common.navbar')
     @yield('content')
     @include('common.footer')
+
 </body>
     @include('common.bottomscript')
     @yield('customscript')

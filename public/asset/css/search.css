@@ -1,0 +1,251 @@
+.modal-body{
+    #size {
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         height: 300px; /* Set a fixed height */
+     }
+
+     .modal-image-container {
+        width: 256px; /* Fixed width */
+        height: 256px; /* Fixed height */
+        position: relative;
+        overflow: hidden;
+        background-color: #fff; /* Background color */
+        border-radius: 15px; /* Curved borders */
+    }
+
+    #modal-icon-img {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%); /* Center the image */
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    .dark-mode, .day-mode {
+        width: 25px;
+        height: 25px;
+        margin: 0% 0% 0% 35%;
+    }
+    .dark-mode {
+        fill: #91a3b0;
+    }
+
+    .dark-mode:hover {
+        cursor: pointer;
+        fill: #3686A0;
+    }
+
+    .day-mode {
+        fill: #FDB813;
+    }
+
+    .day-mode:hover {
+        cursor: pointer;
+        fill: darkgoldenrod;
+    }
+
+     #downloadicons{
+         display: flex;
+         flex-wrap: wrap;
+         justify-content: space-evenly;
+     }
+     #downloadicons .cardd{
+        background-color: #4285f4;
+        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+        width: 190px;
+        text-align: center;
+        user-select: none;
+        font-size: 20px;
+        text-transform: uppercase;
+        transition: all 0.4s ease-in-out;
+        position: relative;
+        overflow: hidden;
+        transform-style: preserve-3d;
+     }
+     #downloadicons .cardd:hover{
+        background-color: #2f6cce;
+        border-radius: 0;
+        scale: 1.1;
+        transform: rotateY(20deg);
+     }
+     #downloadicons .cardd:hover::after{
+        width: 100%;
+     }
+     #downloadicons .cardd:nth-child(2):hover{
+        background-color: #2f6cce;
+        border-radius: 0;
+        scale: 1.1;
+        transform: rotateY(20deg);
+    }
+
+     #downloadicons .cardd::after{
+        background-color: #4285f4;
+        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+        width: 190px;
+        text-align: center;
+        user-select: none;
+        font-size: 20px;
+        text-transform: uppercase;
+        transition: all 0.4s ease-in-out;
+        position: relative;
+        overflow: hidden;
+        transform-style: preserve-3d;
+     }
+     #downloadicons .cardd:nth-child(3){
+        background-color: #D4403A;
+        transform: rotate(0deg);
+        transition: all 0.4s ease-in-out;
+     }
+     #downloadicons .cardd:nth-child(3):hover{
+        background-color: #c02621;
+        border-radius: 0;
+        scale: 1.1;
+        transform: rotateY(20deg);
+     }
+     #downloadicons .cardd:nth-child(4){
+        background-color: #3A833A;
+        transform: rotate(0deg);
+        transition: all 0.4s ease-in-out;
+     }
+     #downloadicons .cardd:nth-child(4):hover{
+        background-color: #396e39;
+        border-radius: 0;
+        scale: 1.1;
+        transform: rotateY(20deg);
+     }
+     .row{
+         justify-content: center;
+         width: 100%;
+     }
+     .d-flex {
+         display: flex;
+     }
+
+     .justify-content-between {
+         justify-content: space-between;
+     }
+
+     .align-items-center {
+         align-items: center;
+     }
+
+     .size-control {
+         flex: 1;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+     }
+
+     .color-picker {
+         flex: 1;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+     }
+
+     .color-picker input[type="color"] {
+         appearance: none;
+         -webkit-appearance: none;
+         border: none;
+         width: 50px;
+         height: 50px;
+         border-radius: 50%;
+         overflow: hidden;
+         cursor: pointer;
+     }
+
+     .color-picker input[type="color"]::-webkit-color-swatch {
+         border: none;
+         border-radius: 50%;
+     }
+
+     .color-picker input[type="color"]::-webkit-color-swatch-wrapper {
+         padding: 0;
+     }
+
+     /* .jscolor {
+         position: fixed;
+         z-index: 3;
+         padding: 1em;
+         box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
+         border: 0;
+         border-radius: 5px;
+         cursor: pointer;
+       } */
+
+ }
+ /* Center the spinner in the modal */
+/* Center the spinner in the modal */
+#loadingSpinner .modal-dialog-centered {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  #loadingSpinner .modal-content {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  #loadingSpinner .spinner-border {
+    width: 3rem; /* Default size for medium to large screens */
+    height: 3rem;
+    border-width: 0.25rem;
+  }
+
+  #loadingSpinner .spinner-border.text-primary {
+    color: #007bff; /* Adjust color if needed */
+  }
+
+  #loadingSpinner .spinner-border::before {
+    content: "";
+    display: block;
+    height: 100%;
+    width: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0, 123, 255, 0.25) 50%, transparent 50%);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.2);
+      opacity: 0.5;
+    }
+  }
+
+  /* Small screens (e.g., phones) */
+  @media (max-width: 576px) {
+    #loadingSpinner .spinner-border {
+      width: 2rem; /* Smaller size for small screens */
+      height: 2rem;
+      border-width: 0.2rem;
+    }
+  }
+
+  /* Large screens (e.g., desktops) */
+  @media (min-width: 992px) {
+    #loadingSpinner .spinner-border {
+      width: 4rem; /* Larger size for large screens */
+      height: 4rem;
+      border-width: 0.3rem;
+    }
+  }
+
+  /* Extra large screens */
+  @media (min-width: 1200px) {
+    #loadingSpinner .spinner-border {
+      width: 5rem; /* Even larger size for extra large screens */
+      height: 5rem;
+      border-width: 0.35rem;
+    }
+  }

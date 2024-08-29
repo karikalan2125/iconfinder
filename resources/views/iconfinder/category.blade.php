@@ -30,6 +30,13 @@
             @endforelse
         </div>
     </div>
+    <div id="loading-infinity" style="display: none; text-align: center; padding: 20px;">
+        <video autoplay loop muted style="width: 100px;">
+            <source src="{{ asset('asset/image/loading.webm') }}" type="video/webm">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    <div id = "loading_indicator"> </div>
 </section>
 @endsection
 @section('customscript')

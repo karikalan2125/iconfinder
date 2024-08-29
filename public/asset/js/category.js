@@ -19,6 +19,7 @@ $(document).ready(function() {
                         console.log('length'+length);
                         page = parseInt(page) + 1;
                         $('.load').html('true');
+                        $('#loading-infinity').show();
                         $.ajax({
                             url: baseUrl + '/icons',
                             method: "GET",
@@ -28,9 +29,15 @@ $(document).ready(function() {
                                 console.log('action'+data);
                                     $('#src').append($(data).hide().fadeIn(1000));
                                     $('.load').html('false');
+                                    $('#loading-infinity').hide();
                                     if(page== parseInt($('#load-more').html())){
                                     $('#load-more').remove();
                                 }
+                            },
+                            error: function() {
+                                // Hide loading indicator even if there's an error
+                                $('#loading-infinity').hide();
+                                $('.load').html('false');
                             }
                         });
                     }
