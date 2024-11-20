@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 Use App\Models\Category;
 Use App\Models\Style;
 Use App\Models\Icon;
+use App\Models\UserSession;
 use Exception;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Imagick;
@@ -16,6 +18,7 @@ class IconFinderController extends Controller
 {
     public function home ()
     {
+
         $hme_category=Style::where('is_active','0')->where('is_deleted','0')->take(3)->get();
         return view('iconfinder/home',compact('hme_category'));
     }
@@ -190,7 +193,7 @@ class IconFinderController extends Controller
                     $Icon_dtl->where('sort_by_id',$selected_sortby_val);
                 }
             }
-
+            
             $list =  $Icon_dtl->get();
 
             // dd($list);
@@ -408,5 +411,92 @@ class IconFinderController extends Controller
                     }
             }
     }
+
+    public function fetch_svg(Request $request){
+        $iconUrl = $request->query('url');
+        $response =  @file_get_contents($iconUrl);
+        if ($response !== false) {
+            return response($response, 200)
+                ->header('Content-Type', 'image/svg+xml');
+        }
+
+        return response("Failed to fetch SVG", 500);
+    }
+
+    public function incrementViewCount(Request $request){
+        $iconName = $request->input('iconName');
+        // Find the icon by name and increment the view count
+        $icon = Icon::where('icon_name', $iconName)->first();
+        if ($icon) {
+            $icon->view_counts += 1;
+            $icon->save();
+            $updatedCount = $icon->view_counts; // Get the updated view count
+            return response()->json(['message' => 'View count updated successfully.','view_count' => $updatedCount], 200);
+        } else {
+            return response()->json(['message' => 'Icon not found.'], 404);
+        }
+    }
+
+    public function incrementDownloadCount(Request $request)
+    {
+        $icon_name = $request->input('iconname');
+        // dd($icon_name);
+        $format = $request->input('format');
+
+        // Find the image by its URL or other unique identifier
+        $icon = Icon::where('icon_name', $icon_name)->first();
+
+        if ($icon) {
+            // Increment the download count
+            $icon->download_counts++;
+            $icon->save();
+
+            $updatedDownloadcount = $icon->download_counts;
+
+            return response()->json(['message' => 'Download count updated successfully','downloadcount'=>$updatedDownloadcount]);
+        }
+
+        return response()->json(['message' => 'Icon not found'], 404);
+    }
+
+    public function storeUserDetails(Request $request)
+    {
+        $ip = request()->ip();
+        $apiKey = '6682e351-2110-4437-a88e-4035c17d0177';
+
+        if ($ip === '127.0.0.1' || $ip === '::1') {
+            $location = 'Localhost';
+        } else {
+            $response = Http::get("http://ipinfo.io/{$ip}/json?token={$apiKey}");
+
+            if ($response->successful()) {
+                $location = $response->json('city') . ', ' . $response->json('country');
+            } else {
+                $location = 'Unknown';
+            }
+        }
+
+        // Create a new user session and store it in the database
+        $session = UserSession::create([
+            'ip_address' => $ip,
+            'location' => $location,
+            'session_id' => $request->sessionId,
+            'in_time' => now(),
+        ]);
+
+
+        return response()->json(['status' => 'success']);
+    }
+
+
+    public function storeOutTime(Request $request)
+{
+
+    UserSession::where('session_id', $request->sessionId)
+        ->update(['out_time' => now()]);
+
+    return response()->json(['message' => 'Logout time stored successfully']);
+}
+
 
 }

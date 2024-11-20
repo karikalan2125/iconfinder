@@ -10,11 +10,11 @@ abstract class Controller
 {
     public function __construct()
     {
-        $category =Category::where('is_active', 0)->where('is_active', 0)->take(8)->get();
-        $style =Style::where('is_active', 0)->where('is_active', 0)->take(8)->get();
-        $license =License::where('is_active', 0)->where('is_active', 0)->take(8)->get();
-        $icon_type =Icon_Type::where('is_active', 0)->where('is_active', 0)->take(8)->get();
-        $sort_type =SortBy::where('is_active', 0)->where('is_active', 0)->take(8)->get();
+        $category =Category::where('is_active', 0)->where('is_deleted',0)->take(8)->get();
+        $style =Style::where('is_active', 0)->where('is_deleted',0)->take(8)->get();
+        $license =License::where('is_active', 0)->where('is_deleted',0)->take(8)->get();
+        $icon_type =Icon_Type::where('is_active', 0)->where('is_deleted',0)->take(8)->get();
+        $sort_type =SortBy::where('is_active', 0)->where('is_deleted',0)->take(8)->get();
 
         view()->share(compact('category','style','license','icon_type','sort_type'));
     }

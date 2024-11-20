@@ -1,5 +1,5 @@
 <section class="filter">
-    <h4 class="fw-bold ps-4 py-3">Filter</h4>   
+    <h4 class="fw-bold ps-4 py-3">Filter</h4>
     <div>
         <h5 class="font-blue fw-bold text-center py-4">License</h5>
         <div class="ps-4">
@@ -11,7 +11,7 @@
                     </label>
                 </div>
                 @foreach ($license as $index => $row)
-                <div class="form-check pb-3  ">
+                <div class="form-check pb-3" style="{{$row->license_name == "free" ? 'display:block;' : 'display:none'}}">
                     <input class="form-check-input cursor" value="{{$row->license_id}}" data-slug="{{$row->license_name}}" type="radio" name="flexRadioDefault" id="{{$row->license_name}}">
                     <label class="form-check-label cursor" for="{{$row->license_name}}">
                         {{ $row->license_name }}

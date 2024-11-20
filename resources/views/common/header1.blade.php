@@ -16,6 +16,7 @@
                                 </button>
                                 <ul class="dropdown-menu mega-menu p-xl-4 p-lg-4 p-sm-4 p-md-4 p-2 w-100" aria-labelledby="dropdownMenuButton1">
                                     <div class="row">
+                                    
                                         @if(isset($category) && !empty($category))
                                         <h6 class="fw-bold pb-2">Category </h6>
                                             @foreach ($category as $show_cat)

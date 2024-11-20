@@ -33,7 +33,9 @@ class Icon extends Model
         'icon_search_key',
         'source_format_type',
         'icon_size',
-        'meta_description'
+        'meta_description',
+        'view_counts',
+        'download_counts',
     ];
 
     public function style()

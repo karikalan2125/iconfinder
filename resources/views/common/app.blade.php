@@ -13,6 +13,7 @@
     @include('common.footer')
 
 </body>
+
     @include('common.bottomscript')
     @yield('customscript')
 </html>

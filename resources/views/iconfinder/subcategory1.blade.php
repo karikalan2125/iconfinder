@@ -5,12 +5,12 @@
     <div class="container-fluid">
         <div class="row height_set">
             <div class="col-12">
-                <div class="filter-txt" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample">
+                {{-- <div class="filter-txt" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample">
                     <div class="d-flex align-tems-center gap-2 pt-3">
                         <i class="fa fa-filter" aria-hidden="true"></i>
                         <h6>Filter</h6>
                     </div>
-                </div>
+                </div> --}}
                 <h4 class="fw-bold ps-xl-4 ps-lg-4 ps-sm-3 ps-md-3 ps-0 py-3 opacity-75 text-sm-center text-md-center text-lg-start text-xl-start text-center">Icons</h4>
                 <div class="row px-xl-4 px-lg-3 px-md-3 px-sm-2 px-2 py-3">
                     @foreach ($iconsGroupedByCategory as $group)

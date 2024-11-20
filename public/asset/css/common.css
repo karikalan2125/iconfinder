@@ -1,9 +1,15 @@
 html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i,
-center, dl, dt, dd,  fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+center, dl, dt, dd,  fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
 	margin:0;
 	padding:0;
 	border:0;
 	outline:none;
+}
+.footer{
+    margin-top: 4.5rem;
+    padding: 0;
+    border: 0;
+    outline: none;
 }
 .hidden-body {
     visibility: hidden;
@@ -13,6 +19,13 @@ html, body {
     margin: 0;
     padding: 0;
 }
+.active-link {
+    color: #007bff; /* or any blue shade */
+}
+a{
+    text-decoration: none;
+    color: black;
+}
 *{
 	line-height:1.5;
 	font-family: 'Heebo', sans-serif;
@@ -20,10 +33,7 @@ html, body {
 ol, ul {
 	list-style:none;
 }
-a{
-    text-decoration: none;
-    color:hsl(0, 0%, 0%) !important;
-}
+
 .font-sz{
     font-size: 14px;
 }
@@ -65,7 +75,7 @@ a{
     display: none!important;
 }
 .height_set{
-    padding-bottom: 150px;
+    padding-bottom: 20rem;
 }
 /* navbar */
 .top-nav{
@@ -84,6 +94,14 @@ a{
     .btn:focus{
         outline: 0;
         border:#fff;
+    }
+    .icons{
+        color: #24a0ed;
+        font-weight: bold;
+        text-decoration: none;
+    }
+    .icons:hover{
+        color: black;
     }
     .col-xl-5
     {
@@ -233,6 +251,7 @@ border-radius: 3px;
         }
 
         #modal-icon-img {
+            display: none;
             position: absolute;
             top: 50%;
             left: 50%;
@@ -247,6 +266,52 @@ border-radius: 3px;
             display: flex; /* Flexbox for layout */
             justify-content: left; /* Center the icon */
             align-items: center; /* Align the icon vertically */
+        }
+
+        #modal-icon-img svg {
+            width: 100%; /* Set the desired width of the SVG */
+            height: 100%; /* Set the desired height of the SVG */
+            max-width: 100%; /* Ensure it doesn't stretch beyond container */
+            max-height: 100%; /* Ensure it doesn't stretch beyond container */
+        }
+
+        .skeleton-loader {
+            display: flex;
+            justify-content: center;
+            height: 300px;
+            align-items: center;
+            background-color: #f0f0f000;
+            border-radius: 10px;
+        }
+        .skeleton-item {
+            width: 250px;
+            height: 300px;
+            background-color: #e2e5e767;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skeleton-item::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;  /* Start shine off-screen to the left */
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(
+                90deg,
+                rgba(177, 20, 20, 0) 0%,
+                rgba(255, 255, 255, 0.5) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            animation: shine 1.5s ease-in-out infinite;
+        }
+
+        @keyframes shine {
+            to {
+                left: 100%;  /* Move shine from left to right */
+            }
         }
 
         /* Dark Mode and Day Mode Icons */
@@ -596,6 +661,7 @@ border-radius: 3px;
     .header .pt-5{
         padding-top: 2rem !important;
     }
+
 }
 @media only screen and (max-width:600px){
     h1{
@@ -633,11 +699,13 @@ border-radius: 3px;
     }
     .jkfrjhqwd{
         display: block!important;
+
     }
     .jkfrjh{
         display: none!important;
     }
     .top-nav {
+
         #search-form.show {
             display: none !important;
         }
@@ -673,6 +741,9 @@ border-radius: 3px;
     }
     .filter-txt{
         display: block!important;
+    }
+    .footer{
+        margin-top: 11rem;
     }
 }
 

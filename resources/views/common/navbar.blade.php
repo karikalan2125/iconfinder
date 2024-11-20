@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="row align-self-center">
             <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-4 text-center align-self-center">
-                <a href="{{url('/')}}"><h4 class="text-primary fw-bold text-start ">Icons.Com</h4></a>
+                <a href="{{url('/')}}"><h4 class="icons">Icons.Com</h4></a>
             </div>
             <div class="col-xl-5 col-lg-5 col-md-5 col-sm-5 col-8" id="search-form">
                 <form autocomplete="off" method="get" action="{{ route('icons.search') }}">
@@ -14,15 +14,15 @@
             </div>
             <div class="col-xl-5 col-lg-5 col-md-5 col-sm-5 col-8 align-self-center">
                 <div class="d-flex gap-xl-4 gap-lg-4 gap-md-3 gap-sm-1 gap-2 justify-content-start align-items-center jkfrjh">
-                    <a href="{{url('icons')}}"><h6>Icon</h6></a>
+                    <a class="{{Request::is('icons') ? 'active-link' : ''}}" href="{{url('icons')}}">Icon</a>
                     <div class="dropdown">
-                        <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="btn dropdown-toggle nav-item {{ request()->is('icons/category-set/*') ? 'active-link' : '' }}" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                             Categories
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                         @if(isset($category) && !empty($category))
                             @foreach ($category as $show_cat)
-                            <li><a class="dropdown-item" href="{{ url('icons/category-set/' . $show_cat->category_url_key) }}">{{ $show_cat->category_name }}</a></li>
+                            <li><a class="dropdown-item {{Request::is('icons/category-set/' . $show_cat->category_url_key) ? 'active-link' : ''}} " href="{{ url('icons/category-set/' . $show_cat->category_url_key) }}">{{ $show_cat->category_name }}</a></li>
                             @endforeach
                             @else
                                 <li><a class="dropdown-item" href="">No Categories</a></li>
@@ -30,13 +30,13 @@
                         </ul>
                     </div>
                     <div class="dropdown">
-                        <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="btn dropdown-toggle nav-item {{ request()->is('icons/style-set/*') ? 'active-link' : '' }}" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                             Styles
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                         @if(isset($style) && !empty($style))
                             @foreach ($style as $row)
-                            <li><a class="dropdown-item" href="{{ url('icons/style-set/' . $row->style_url_key) }}">{{ $row->style_name }}</a></li>
+                            <li><a class="dropdown-item {{Request::is('icons/style-set/' . $row->style_url_key) ? 'active-link' : ''}}" href="{{ url('icons/style-set/' . $row->style_url_key) }}">{{ $row->style_name }}</a></li>
                             @endforeach
                             @else
                                 <li><a class="dropdown-item" href="">No Categories</a></li>
@@ -59,15 +59,15 @@
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-        <a href="{{url('icons')}}"><h4 class="py-2 ps-3">Icon</h4></a>
+        <a class="py-3 ps-3 {{Request::is('icons') ? 'active-link' : ''}}" href="{{url('icons')}}">Icon</a>
         <div class="dropdown">
-            <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn dropdown-toggle {{ request()->is('icons/category-set/*') ? 'active-link' : '' }} " type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                 Categories
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
             @if(isset($category) && !empty($category))
                 @foreach ($category as $show_cat)
-                <li><a class="dropdown-item" href="{{ url('icons/category-set/' . $show_cat->category_url_key) }}">{{ $show_cat->category_name }}</a></li>
+                <li><a class="dropdown-item {{Request::is('icons/category-set/' . $show_cat->category_url_key) ? 'active-link' : ''}} " href="{{ url('icons/category-set/' . $show_cat->category_url_key) }}">{{ $show_cat->category_name }}</a></li>
                 @endforeach
                 @else
                     <li><a class="dropdown-item" href="">No Categories</a></li>
@@ -75,13 +75,13 @@
             </ul>
         </div>
         <div class="dropdown">
-            <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn dropdown-toggle {{ request()->is('icons/style-set/*') ? 'active-link' : '' }}" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                 Styles
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
             @if(isset($style) && !empty($style))
                 @foreach ($style as $row)
-                <li><a class="dropdown-item" href="{{ url('icons/style-set/' . $row->style_url_key) }}">{{ $row->style_name }}</a></li>
+                <li><a class="dropdown-item {{Request::is('icons/style-set/' . $row->style_url_key) ? 'active-link' : ''}}" href="{{ url('icons/style-set/' . $row->style_url_key) }}">{{ $row->style_name }}</a></li>
                 @endforeach
                 @else
                     <li><a class="dropdown-item" href="">No Categories</a></li>

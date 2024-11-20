@@ -16,6 +16,7 @@
     }
 
     #modal-icon-img {
+        display: none;
         position: absolute;
         top: 50%;
         left: 50%;
@@ -23,28 +24,59 @@
         max-width: 100%;
         max-height: 100%;
     }
-
-    .dark-mode, .day-mode {
-        width: 25px;
-        height: 25px;
-        margin: 0% 0% 0% 35%;
-    }
-    .dark-mode {
-        fill: #91a3b0;
-    }
-
-    .dark-mode:hover {
-        cursor: pointer;
-        fill: #3686A0;
+    /* Icon Container */
+    .icon-container {
+        position: relative;
+        padding: 0% 0% 1% 35%; /* Adjust this for responsiveness */
+        display: flex; /* Flexbox for layout */
+        justify-content: left; /* Center the icon */
+        align-items: center; /* Align the icon vertically */
     }
 
-    .day-mode {
-        fill: #FDB813;
+    #modal-icon-img svg {
+        width: 100%; /* Set the desired width of the SVG */
+        height: 100%; /* Set the desired height of the SVG */
+        max-width: 100%; /* Ensure it doesn't stretch beyond container */
+        max-height: 100%; /* Ensure it doesn't stretch beyond container */
     }
 
-    .day-mode:hover {
-        cursor: pointer;
-        fill: darkgoldenrod;
+    .skeleton-loader {
+        display: flex;
+        justify-content: center;
+        height: 300px;
+        align-items: center;
+        background-color: #f0f0f000;
+        border-radius: 10px;
+    }
+    .skeleton-item {
+        width: 250px;
+        height: 300px;
+        background-color: #e2e5e767;
+        border-radius: 12px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .skeleton-item::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;  /* Start shine off-screen to the left */
+        height: 100%;
+        width: 100%;
+        background: linear-gradient(
+            90deg,
+            rgba(177, 20, 20, 0) 0%,
+            rgba(255, 255, 255, 0.5) 50%,
+            rgba(255, 255, 255, 0) 100%
+        );
+        animation: shine 1.5s ease-in-out infinite;
+    }
+
+    @keyframes shine {
+        to {
+            left: 100%;  /* Move shine from left to right */
+        }
     }
 
      #downloadicons{

@@ -1,4 +1,5 @@
 $(document).ready(function(){
+    var iconName;
     $(".owl-carousel").owlCarousel({
       loop: true,
       nav: true,
@@ -24,11 +25,63 @@ $(document).ready(function(){
 
 // model
 function attachCardClickHandler() {
-    $('.cards.cursor, .owl-card.cursor').on('click', function() {
+    $('.cards.cursor, .owl-card.cursor').off('click').on('click', function() {
         var iconUrl = $(this).data('icon-url');
-        var iconName = $(this).data('icon-name');
+        iconName = $(this).data('icon-name');
 
-        $('#modal-icon-img').attr('src', iconUrl);
+        var selected_license = $('input[name="flexRadioDefault"]:checked');
+        var selected_license_val = selected_license.val();
+        var selected_license_slug = selected_license.attr('data-slug');
+
+        var selected_style = $('input[name="flexRadioDefault1"]:checked');
+        var selected_style_val = selected_style.val();
+        var selected_style_slug = selected_style.attr('data-slug');
+
+        var selected_icon = $('input[name="flexRadioDefault2"]:checked');
+        var selected_icon_val = selected_icon.val();
+        var selected_icon_slug = selected_icon.attr('data-slug');
+
+        var selected_sortby = $('input[name="flexRadioDefault3"]:checked');
+        var selected_sortby_val = selected_sortby.val();
+        var selected_sortby_slug = selected_sortby.attr('data-slug');
+
+        var base_url = cat_slug;
+        var query_string = 'license=' + encodeURIComponent(selected_license_slug) +
+                           '&style=' + encodeURIComponent(selected_style_slug) +
+                           '&icon=' + encodeURIComponent(selected_icon_slug) +
+                           '&sortby=' + encodeURIComponent(selected_sortby_slug);
+        var url = base_url + '?' + query_string;
+        window.history.replaceState(null, null, url);
+
+        $.ajax({
+            url: base_url+'/increment_view_count',
+            type: 'POST',
+            data: {
+                iconName: iconName,
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                console.log("View count updated successfully");
+                console.log('View count : '  + response.view_count)
+            },
+            error: function() {
+                console.log("Failed to update view count.");
+            }
+        });
+
+        $.ajax({
+            url: base_url+'/fetch_svg?url=' +encodeURIComponent(iconUrl), // iconUrl is the SVG file URL from the server
+            success: function(data) {
+                // Set the content of the SVG inside the modal-icon-img div
+                $('#modal-icon-img').html(data.documentElement);
+                $('#downloadpng').data('icon-url', iconUrl);
+                $('#downloadjpeg').data('icon-url', iconUrl);
+                $('#downloadsvg').data('icon-url', iconUrl);
+            },
+            error: function() {
+                console.log("Failed to load SVG content.");
+            }
+        });
         $('#modal-icon-name').text(iconName);
 
         $('#image_down input[name="imgslug"]').val(iconUrl);
@@ -36,6 +89,12 @@ function attachCardClickHandler() {
         if (!$('#exampleModal').hasClass('show')) {
             var modal = new bootstrap.Modal(document.getElementById('exampleModal'));
             modal.show();
+
+            setTimeout (function (){
+                $("#skeletonLoader").hide();
+                $("#modal-icon-img").css("display", "block");
+            },1000
+            );
 
             let active_txt = '256px';
             let sizeInPx = parseInt(active_txt);  // Convert size to integer
@@ -48,15 +107,6 @@ function attachCardClickHandler() {
             $('#customColorPicker').val('#000000'); // Reset to default color
             // selectColor('#000000'); // Apply default color to icon
 
-            // Reset the dark-mode
-            $('#moon-icon').show();
-            $('#sun-icon').hide();
-            $('#modal-icon-img').css({
-                'filter': 'none',  // Remove dark mode filter
-            });
-            $('.modal-image-container').css({
-                'background-color': '#fff' // Light background for day mode
-            });
         }
     });
 }
@@ -165,6 +215,7 @@ $(document).ready(function() {
 
     // Initial check for URL and attach event handlers
     attachCardClickHandler();
+
 });
 
 // image download
@@ -207,37 +258,14 @@ $(document).ready(function() {
         $('#loadingSpinner').modal('hide');
     }
 
-    // Handle dark mode switching
-    $('#moon-icon').on('click', function() {
-        $('#moon-icon').hide();
-        $('#sun-icon').show();
-        $('#modal-icon-img').css({
-            'filter': 'invert(1)',  // Example filter to simulate dark mode
-            'padding':'0.5vh',
-            'border-radius':'10px'
-        });
-        $('.modal-image-container').css({
-            'background-color': '#000' // Dark background for dark mode
-        });
-    });
-
-    $('#sun-icon').on('click', function() {
-        $('#sun-icon').hide();
-        $('#moon-icon').show();
-        $('#modal-icon-img').css({
-            'filter': 'none',  // Remove dark mode filter
-        });
-        $('.modal-image-container').css({
-            'background-color': '#fff' // Light background for day mode
-        });
-    });
-
   // Handle click on the download button
-  $("#downloadpng").click(async function() {
+    $("#downloadpng").click(async function() {
     showLoading(); // Show the loading spinner when the download starts
 
-    var imgUrl = $(this).data('img');
-    console.log(imgUrl);
+    var imgUrl = $(this).data('icon-url');
+
+    var iconname = iconName;
+
     var format = 'png'; // Extract format from the ID
     var color = $('#customColorPicker').val();
     var url = base_url + 'download_icon?imgUrl=' + encodeURIComponent(imgUrl) + '&active_txt=' + active_txt + '&format=' + format + '&color=' + encodeURIComponent(color);
@@ -277,202 +305,199 @@ $(document).ready(function() {
         // Cleanup
         URL.revokeObjectURL(blobUrl);
         document.body.removeChild(link);
-    } catch (error) {
-        console.error(error);
-        alert('Failed to download the image.');
-    } finally {
-        hideLoading(); // Hide the loading spinner
-    }
-});
 
-$("#downloadjpeg").click(async function() {
-    showLoading(); // Show the loading spinner when the download starts
+        // Increment the download count
+        $.ajax({
+            url: '/icons/style-set/outline/increment_download_count', // Replace with your endpoint to increment the download count
+            type: 'POST',
+            data: {
+                iconname: iconname,
+                format: format,
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                console.log("Download count updated successfully");
+                hideLoading(); // Hide the loading spinner
+                console.log('download_count : '+response.downloadcount);
 
-    var imgUrl = $(this).data('img');
-    var format = 'jpeg'; // Extract format from the ID
-    var color = $('#customColorPicker').val();
-    var url = base_url + 'download_icon?imgUrl=' + encodeURIComponent(imgUrl) + '&active_txt=' + active_txt + '&format=' + format + '&color=' + encodeURIComponent(color);
-
-    try {
-        // Fetch the image file
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            error: function() {
+                console.log("Failed to update download count.");
+                hideLoading(); // Hide the loading spinner
             }
         });
 
-        if (!response.ok) {
-            throw new Error('Failed to fetch the image');
-        }
-
-        // Get the image as a Blob
-        const blob = await response.blob();
-        const blobUrl = URL.createObjectURL(blob);
-
-        // Create a temporary link element
-        const link = document.createElement('a');
-        link.href = blobUrl;
-
-        // Determine the correct file extension
-        let extension = format;
-        link.download = `downloaded_image.${extension}`;
-        
-        // Append the link to the body
-        document.body.appendChild(link);
-
-        // Trigger the download
-        link.click();
-
-        // Cleanup
-        URL.revokeObjectURL(blobUrl);
-        document.body.removeChild(link);
     } catch (error) {
         console.error(error);
         alert('Failed to download the image.');
     } finally {
         hideLoading(); // Hide the loading spinner
     }
-});
+    });
 
-$("#downloadsvg").click(async function() {
-    showLoading(); // Show the loading spinner when the download starts
+    $("#downloadjpeg").click(async function() {
+        showLoading(); // Show the loading spinner when the download starts
 
-    var imgUrl = $(this).data('img');
-    console.log(imgUrl);
-    var format = 'svg';
-    var color = $('#customColorPicker').val();
-    var url = base_url + 'download_icon?imgUrl=' + encodeURIComponent(imgUrl) + '&active_txt=' + active_txt + '&format=' + format + '&color=' + encodeURIComponent(color);
+        var imgUrl = $(this).data('img');
+        var iconname = iconName;
+        var format = 'jpeg'; // Extract format from the ID
+        var color = $('#customColorPicker').val();
+        var url = base_url + 'download_icon?imgUrl=' + encodeURIComponent(imgUrl) + '&active_txt=' + active_txt + '&format=' + format + '&color=' + encodeURIComponent(color);
 
-    try {
-        // Fetch the image file
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        try {
+            // Fetch the image file
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch the image');
             }
-        });
 
-        if (!response.ok) {
-            throw new Error('Failed to fetch the image');
+            // Get the image as a Blob
+            const blob = await response.blob();
+            const blobUrl = URL.createObjectURL(blob);
+
+            // Create a temporary link element
+            const link = document.createElement('a');
+            link.href = blobUrl;
+
+            // Determine the correct file extension
+            let extension = format;
+            link.download = `downloaded_image.${extension}`;
+
+            // Append the link to the body
+            document.body.appendChild(link);
+
+            // Trigger the download
+            link.click();
+
+            // Cleanup
+            URL.revokeObjectURL(blobUrl);
+            document.body.removeChild(link);
+
+            $.ajax({
+                url: '/icons/style-set/outline/increment_download_count', // Replace with your endpoint to increment the download count
+                type: 'POST',
+                data: {
+                    iconname: iconname,
+                    format: format,
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    console.log("Download count updated successfully");
+                    console.log('download_count : '+response.downloadcount);
+                    hideLoading(); // Hide the loading spinner
+
+                },
+                error: function() {
+                    console.log("Failed to update download count.");
+                }
+            });
+
+        } catch (error) {
+            console.error(error);
+            hideLoading(); // Hide the loading spinner
+            alert('Failed to download the image.');
+        } finally {
+            hideLoading(); // Hide the loading spinner
         }
+    });
 
-        // Get the image as a Blob
-        const blob = await response.blob();
-        const blobUrl = URL.createObjectURL(blob);
+    $("#downloadsvg").click(async function() {
+        showLoading(); // Show the loading spinner when the download starts
 
-        // Create a temporary link element
-        const link = document.createElement('a');
-        link.href = blobUrl;
+        var imgUrl = $(this).data('icon-url');;
+        var iconname = iconName;
+        var format = 'svg';
+        var color = $('#customColorPicker').val();
+        var url = base_url + 'download_icon?imgUrl=' + encodeURIComponent(imgUrl) + '&active_txt=' + active_txt + '&format=' + format + '&color=' + encodeURIComponent(color);
 
-        // Determine the correct file extension
-        let extension = format ;
-        link.download = `downloaded_image.${extension}`;
+        try {
+            // Fetch the image file
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
 
-        // Append the link to the body
-        document.body.appendChild(link);
+            if (!response.ok) {
+                throw new Error('Failed to fetch the image');
+            }
 
-        // Trigger the download
-        link.click();
+            // Get the image as a Blob
+            const blob = await response.blob();
+            const blobUrl = URL.createObjectURL(blob);
 
-        // Cleanup
-        URL.revokeObjectURL(blobUrl);
-        document.body.removeChild(link);
-    } catch (error) {
-        console.error(error);
-        alert('Failed to download the image.');
-    } finally {
-        hideLoading(); // Hide the loading spinner
-    }
-});
+            // Create a temporary link element
+            const link = document.createElement('a');
+            link.href = blobUrl;
 
+            // Determine the correct file extension
+            let extension = format ;
+            link.download = `downloaded_image.${extension}`;
 
-    // $("#downloadjpeg").click(function() {
-    //     showLoading(); // Show the loading spinner when the download starts
+            // Append the link to the body
+            document.body.appendChild(link);
 
-    //     var imgUrl = $(this).data('img');
-    //     var format = 'jpeg';
-    //     var color = $('#customColorPicker').val();
-    //     var url = base_url + 'download_icon?imgUrl=' + encodeURIComponent(imgUrl) + '&active_txt=' + active_txt + '&format=' + format + '&color=' + encodeURIComponent(color);
+            // Trigger the download
+            link.click();
 
-    //     // Create a temporary link element
-    //     var link = document.createElement('a');
-    //     link.href = url;
+            // Cleanup
+            URL.revokeObjectURL(blobUrl);
+            document.body.removeChild(link);
 
-    //     // Append the link to the body (necessary for Firefox)
-    //     document.body.appendChild(link);
+            // Increment the download count
+            $.ajax({
+                url: '/icons/style-set/outline/increment_download_count', // Replace with your endpoint to increment the download count
+                type: 'POST',
+                data: {
+                    iconname: iconname,
+                    format: format,
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    console.log("Download count updated successfully");
+                    console.log('download_count : '+response.downloadcount);
+                    hideLoading(); // Hide the loading spinner
 
-    //     // Simulate a click on the link
-    //     link.click();
+                },
+                error: function() {
+                    console.log("Failed to update download count.");
+                    hideLoading(); // Hide the loading spinner
+                }
+            });
 
-    //     // Remove the link from the document
-    //     document.body.removeChild(link);
+        } catch (error) {
+            console.error(error);
+            alert('Failed to download the image.');
+            hideLoading(); // Hide the loading spinner
+        } finally {
+            hideLoading(); // Hide the loading spinner
+        }
+    });
 
-    //     // Set a timeout to hide the loading spinner after a short delay
-    //     setTimeout(function() {
-    //         hideLoading();
-    //     }, 1500); // Adjust the delay as needed for download completion
-    // });
-
-
-//   $("#downloadsvg").click(function() {
-//     //   var imgUrl = $(this).data('img');
-//     // //   var url = base_url + 'download_icon';
-//     // var url = base_url + 'download_icon?imgUrl=' + encodeURIComponent(imgUrl) + '&active_txt=' + active_txt;
-//     // window.location.href = url;
-//     showLoading();
-//     var imgUrl = $(this).data('img');
-//     var format='svg';
-//     var color = $('#customColorPicker').val();
-//     var url = base_url + 'download_icon?imgUrl=' + encodeURIComponent(imgUrl) + '&active_txt=' + active_txt + '&format=' + format + '&color=' + encodeURIComponent(color);
-//     // Create a temporary link element
-//     var link = document.createElement('a');
-//     link.href = url;
-
-//     // Append the link to the body (necessary for Firefox)
-//     document.body.appendChild(link);
-
-//     // Simulate a click on the link
-//     link.click();
-
-//     // Remove the link from the document
-//     document.body.removeChild(link);
-//     //   $.ajax({
-//     //     type: "get",
-//     //     url: url,
-//     //     dataType: 'json',
-//     //     data: {
-//     //       'imgUrl': imgUrl,
-//     //       'active_txt': active_txt
-//     //     },
-//     //     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-//     //     success: function(response) {
-//     //     },
-//     //     error: function(error) {
-//     //     }
-//     //   });
-//     setTimeout(function() {
-//         hideLoading();
-//     }, 1500); // Adjust the delay as needed for download completion
-//     });
   });
 
-
-
-
-//  Event listener for the color picker input
-// document.getElementById("customColorPicker").addEventListener("input", function() {
-//     const selectedColor = this.value;
-//     selectColor(selectedColor);
-// });
-function selectColor(color) {
-    var url = $('$modal-icon-img')
-    return $('#modal-icon-img').css('fill', color);
-}
-
 //copyimage
+$("#customColorPicker").on("change", function (){
+    const color = $(this).val();
+    if(color === '#ffffff'){
+        $("#modal-icon-img").css("background-color",'black')
+        $("#modal-icon-img svg path").attr("fill",color);
+    }
+    else{
+        $("#modal-icon-img").css("background-color",'white')
+        $("#modal-icon-img svg path").attr("fill",color);
+    }
+
+  });
 
 toastr.options = {
   "closeButton": true,
