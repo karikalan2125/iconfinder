@@ -338,10 +338,11 @@ $(document).ready(function() {
     $("#downloadjpeg").click(async function() {
         showLoading(); // Show the loading spinner when the download starts
 
-        var imgUrl = $(this).data('img');
+        var imgUrl = $(this).data('icon-url');
         var iconname = iconName;
         var format = 'jpeg'; // Extract format from the ID
         var color = $('#customColorPicker').val();
+        console.log(color);
         var url = base_url + 'download_icon?imgUrl=' + encodeURIComponent(imgUrl) + '&active_txt=' + active_txt + '&format=' + format + '&color=' + encodeURIComponent(color);
 
         try {

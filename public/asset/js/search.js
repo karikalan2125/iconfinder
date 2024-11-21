@@ -284,7 +284,7 @@ $(document).ready(function() {
 
     showLoading(); // Show the loading spinner when the download starts
 
-        var imgUrl = $(this).data('img');
+        var imgUrl = $(this).data('icon-url');
         var format = 'jpeg'; // Extract format from the ID
         var color = $('#customColorPicker').val();
         var url = base_url + 'download_icon?imgUrl=' + encodeURIComponent(imgUrl) + '&active_txt=' + active_txt + '&format=' + format + '&color=' + encodeURIComponent(color);

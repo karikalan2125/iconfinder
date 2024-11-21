@@ -70,7 +70,7 @@
                                                     <span class="ps-2 font-sz">DOWNLOAD AS PNG</span>
                                                 </div>
                                             </div>
-                                            <div class="card cardd border-0 py-2 rounded-0 cursor" id="downloadjpeg" data-icon-name="{{ $Icon_dtl->icon_name }}" data-img="{{ $Icon_dtl->icon_url }}">
+                                            <div class="card cardd border-0 py-2 rounded-0 cursor" id="downloadjpeg">
                                                 <div class="d-flex text-white justify-content-center">
                                                     <i class="fa-solid fa-file-image"></i>
                                                     <span class="ps-2 font-sz">DOWNLOAD AS JPEG</span>

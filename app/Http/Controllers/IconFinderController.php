@@ -7,6 +7,7 @@ Use App\Models\Category;
 Use App\Models\Style;
 Use App\Models\Icon;
 use App\Models\UserSession;
+use DOMDocument;
 use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Response;
@@ -147,6 +148,7 @@ class IconFinderController extends Controller
                             ->inRandomOrder()
                             ->take(20)
                             ->get();
+
         return view('iconfinder/detail',compact('Icon_dtl','relatedIcons','cat_slug','cat_id'));
     }
 
@@ -193,7 +195,7 @@ class IconFinderController extends Controller
                     $Icon_dtl->where('sort_by_id',$selected_sortby_val);
                 }
             }
-            
+
             $list =  $Icon_dtl->get();
 
             // dd($list);
@@ -249,9 +251,27 @@ class IconFinderController extends Controller
                     if ($contents === false) {
                         return back()->with('error', 'Failed to retrieve image from URL');
                     }
-                    if ($color) {
-                        $contents = preg_replace('/#000000/', $color, $contents); // Replace black with selected color
-                        // dd($color);
+                    if ($color && strpos($contents, '<svg') !== false) {
+                        // Parse the SVG content and replace colors
+                        $dom = new DOMDocument();
+                        libxml_use_internal_errors(true); // Suppress parsing errors for invalid SVG
+                        $dom->loadXML($contents);
+                        libxml_clear_errors();
+
+                        // Change the `fill` or `stroke` attributes to the desired color
+                        $svgElements = $dom->getElementsByTagName('svg');
+                        if ($svgElements->length > 0) {
+                            $svgElement = $svgElements->item(0);
+                            $svgElement->setAttribute('fill', $color); // Replace the color
+                        }
+
+                        $pathElements = $dom->getElementsByTagName('path');
+                        foreach ($pathElements as $path) {
+                            $path->setAttribute('fill', $color); // Replace `fill` color
+                            $path->setAttribute('stroke', $color); // Replace `stroke` color if needed
+                        }
+
+                        $contents = $dom->saveXML();
                     }
                     $name = basename(parse_url($url, PHP_URL_PATH));
                     $actualname = pathinfo($name, PATHINFO_FILENAME);
@@ -260,7 +280,7 @@ class IconFinderController extends Controller
                     $image = new Imagick();
                     $image->setBackgroundColor(new ImagickPixel('transparent'));
                     $image->readImageBlob($contents);
-                    $image->setResolution(1024, 1024);
+                    $image->setResolution(300, 300);
                     $image->setImageFormat('png');
                     //Convert into Selected Size
                     $resizedImage = clone $image;
@@ -304,9 +324,27 @@ class IconFinderController extends Controller
                     if ($contents === false) {
                         return back()->with('error', 'Failed to retrieve image from URL');
                     }
-                    if ($color) {
-                        $contents = preg_replace('/#000000/', $color, $contents); // Replace black with selected color
-                        // dd($color);
+                    if ($color && strpos($contents, '<svg') !== false) {
+                        // Parse the SVG content and replace colors
+                        $dom = new DOMDocument();
+                        libxml_use_internal_errors(true); // Suppress parsing errors for invalid SVG
+                        $dom->loadXML($contents);
+                        libxml_clear_errors();
+
+                        // Change the `fill` or `stroke` attributes to the desired color
+                        $svgElements = $dom->getElementsByTagName('svg');
+                        if ($svgElements->length > 0) {
+                            $svgElement = $svgElements->item(0);
+                            $svgElement->setAttribute('fill', $color); // Replace the color
+                        }
+
+                        $pathElements = $dom->getElementsByTagName('path');
+                        foreach ($pathElements as $path) {
+                            $path->setAttribute('fill', $color); // Replace `fill` color
+                            $path->setAttribute('stroke', $color); // Replace `stroke` color if needed
+                        }
+
+                        $contents = $dom->saveXML();
                     }
 
                     $name = basename(parse_url($url, PHP_URL_PATH));
@@ -363,13 +401,27 @@ class IconFinderController extends Controller
                         if ($contents === false) {
                             return back()->with('error', 'Failed to retrieve image from URL');
                         }
-                        if ($color) {
-                            if (strtolower($color) === '#ffffff' || strtolower($color) === '#fff') {
-                                // Add a black background if color is white
-                                $backgroundSvg = '<rect width="100%" height="100%" fill="black"/>';
-                                $contents = preg_replace('/<svg([^>]+)>/', '<svg$1>' . $backgroundSvg, $contents);
+                        if ($color && strpos($contents, '<svg') !== false) {
+                            // Parse the SVG content and replace colors
+                            $dom = new DOMDocument();
+                            libxml_use_internal_errors(true); // Suppress parsing errors for invalid SVG
+                            $dom->loadXML($contents);
+                            libxml_clear_errors();
+
+                            // Change the `fill` or `stroke` attributes to the desired color
+                            $svgElements = $dom->getElementsByTagName('svg');
+                            if ($svgElements->length > 0) {
+                                $svgElement = $svgElements->item(0);
+                                $svgElement->setAttribute('fill', $color); // Replace the color
                             }
-                            $contents = preg_replace('/#000000/', $color, $contents); // Replace black with selected color
+
+                            $pathElements = $dom->getElementsByTagName('path');
+                            foreach ($pathElements as $path) {
+                                $path->setAttribute('fill', $color); // Replace `fill` color
+                                $path->setAttribute('stroke', $color); // Replace `stroke` color if needed
+                            }
+
+                            $contents = $dom->saveXML();
                         }
 
                         $name = basename(parse_url($url, PHP_URL_PATH));
