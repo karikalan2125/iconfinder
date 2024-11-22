@@ -1,6 +1,6 @@
 $(document).ready(function(){
     $(".owl-carousel").owlCarousel({
-      loop: true,
+      loop: false,
       nav: true,
       dots: false,
       autoplay: false,
@@ -30,14 +30,20 @@ function attachCardClickHandler() {
 
       var base_url = result;
 
+      $("#skeletonLoader").show();
+      $("#modal-icon-img").hide().empty();
+
       $.ajax({
         url: base_url+'/fetch_svg?url=' +encodeURIComponent(iconUrl), // iconUrl is the SVG file URL from the server
         success: function(data) {
+            $("#skeletonLoader").hide();
+            $("#modal-icon-img").css("display","block");
             // Set the content of the SVG inside the modal-icon-img div
             $('#modal-icon-img').html(data.documentElement);
             $('#downloadpng').data('icon-url', iconUrl);
             $('#downloadjpeg').data('icon-url', iconUrl);
             $('#downloadsvg').data('icon-url', iconUrl);
+            $('#copylink').data('icon-url', iconUrl);
         },
         error: function() {
             console.log("Failed to load SVG content.");
@@ -51,12 +57,6 @@ function attachCardClickHandler() {
       if (!$('#exampleModal').hasClass('show')) {
         var modal = new bootstrap.Modal(document.getElementById('exampleModal'));
         modal.show();
-
-        setTimeout (function (){
-            $("#skeletonLoader").hide();
-            $("#modal-icon-img").css("display", "block");
-        },1000
-        );
 
         let active_txt = '256px';
             let sizeInPx = parseInt(active_txt);  // Convert size to integer
@@ -213,20 +213,22 @@ $(document).ready(function() {
     });
 
     function showLoading() {
-        $('#loadingSpinner').modal('show');
+        $('#loadingSpinnerOverlay').fadeIn(); // Use fadeIn for smooth visibility
     }
 
     // Function to hide the loading spinner
     function hideLoading() {
-        $('#loadingSpinner').modal('hide');
+        $('#loadingSpinnerOverlay').fadeOut(); // Use fadeOut for smooth disappearance
     }
+
 
     // Handle dark mode switching
 
 
   // Handle click on the download button
   $("#downloadpng").click( async function() {
-    showLoading(); // Show the loading spinner when the download starts
+    $('#pngloadingSpinner').show();
+    $('#pngicon').hide();
 
     var imgUrl = $(this).data('icon-url');
 
@@ -276,13 +278,15 @@ $(document).ready(function() {
         console.log(err)
     }
     finally{
-        hideLoading()
+        $('#pngloadingSpinner').hide();
+        $('#pngicon').show();
     }
   });
 
   $("#downloadjpeg").click( async function() {
 
-    showLoading(); // Show the loading spinner when the download starts
+    $('#jpegloadingSpinner').show();
+    $('#jpegicon').hide();
 
         var imgUrl = $(this).data('icon-url');
         var format = 'jpeg'; // Extract format from the ID
@@ -329,14 +333,15 @@ $(document).ready(function() {
             console.log(err);
         }
         finally{
-            setTimeout(hideLoading, 100);
+            $('#jpegloadingSpinner').hide();
+            $('#jpegicon').show();
         }
   });
 
   $("#downloadsvg").click( async function() {
 
-    showLoading(); // Show the loading spinner when the download starts
-
+        $('#svgloadingSpinner').show();
+        $('#svgicon').hide();
         var imgUrl = $(this).data('icon-url');;
         var format = 'svg';
         var color = $('#customColorPicker').val();
@@ -382,9 +387,48 @@ $(document).ready(function() {
             console.log(err)
         }
         finally{
-            hideLoading();
+        $('#svgloadingSpinner').hide();
+        $('#svgicon').show();
         }
   });
+  $("#copylink").click(function (){
+    $('#copyicon').hide();
+    $('#loadingSpinner').show();
+    var imgUrl = $(this).data('icon-url');
+    // console.log(imgUrl);
+    var color = $('#customColorPicker').val();
+    var url = base_url + 'copylink?imgUrl=' + encodeURIComponent(imgUrl) + '&active_txt=' + active_txt + '&color=' + encodeURIComponent(color);
+    $.ajax({
+        url:url,
+        method:'get',
+        data:{
+            url:imgUrl,
+            color: color,
+            _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(response){
+            if(response.copy_link){
+                $('#copyicon').show();
+                $('#loadingSpinner').hide();
+                navigator.clipboard.writeText(response.copy_link).then(() => {
+                    toastr.success('Image URL copied to clipboard!');
+                }).catch(err => {
+                    $('#copyicon').show();
+                    $('#loadingSpinner').hide();
+                    toastr.error('Failed to copy image URL.');
+                });
+            }
+            else{
+                $('#copyicon').show();
+                $('#loadingSpinner').hide();
+                console.log('Failed to copy link');
+            }
+        },
+        error:function(xhr){
+            console.log(xhr.responseText)
+        }
+    })
+})
 });
 
 

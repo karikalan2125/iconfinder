@@ -5,7 +5,10 @@
                 <div class="text-end pt-0"><img src="{{asset('asset/image/premium.png')}}" alt="premium" class="premium"></div>
             @endif --}}
             <div class="text-center"><img src="{{ $row->icon_url }}" alt="" class=""></div>
-            <h6 class="pt-4 text-center">{{ $row->icon_name }}</h6>
+            <h6 class="pt-4 text-center"
+                title="{{ strlen($row->icon_name) > 10 ? $row->icon_name : '' }}">
+                {{ strlen($row->icon_name) > 10 ? Str::limit($row->icon_name, 10, '...') : $row->icon_name }}
+            </h6>
         </div>
     </div>
 @endforeach

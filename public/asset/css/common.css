@@ -33,7 +33,10 @@ a{
 ol, ul {
 	list-style:none;
 }
-
+.dropdown-menu ul a h6:hover{
+    color:#007bff;
+    transition: ease-in 0.2s;
+}
 .font-sz{
     font-size: 14px;
 }
@@ -188,7 +191,7 @@ ol, ul {
 
 /* filter */
 .filter{
-    height: 70%;
+    height: 100%;
     overflow-y: scroll;
     box-shadow: 3px 3px 3px rgb(51 51 51 / 5%);
 }
@@ -224,7 +227,7 @@ border-radius: 3px;
     }
     .scroll-bdy{
         overflow-y: scroll;
-        height: 600px;
+        height: 130vh;
     }
     .scroll-bdy::-webkit-scrollbar {
         display: none;
@@ -282,6 +285,8 @@ border-radius: 3px;
             align-items: center;
             background-color: #f0f0f000;
             border-radius: 10px;
+            position: relative;
+            overflow: hidden;
         }
         .skeleton-item {
             width: 250px;
@@ -301,7 +306,7 @@ border-radius: 3px;
             width: 100%;
             background: linear-gradient(
                 90deg,
-                rgba(177, 20, 20, 0) 0%,
+                rgba(255, 255, 255, 0) 0%,
                 rgba(255, 255, 255, 0.5) 50%,
                 rgba(255, 255, 255, 0) 100%
             );
@@ -345,6 +350,7 @@ border-radius: 3px;
             display: flex;
             flex-wrap: wrap;
             justify-content: space-evenly;
+
         }
         .cardd {
             background-color: #4285f4;
@@ -422,7 +428,7 @@ border-radius: 3px;
         }
 
         .color-picker {
-            flex: 1;
+            flex: 2;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -432,16 +438,14 @@ border-radius: 3px;
             appearance: none;
             -webkit-appearance: none;
             border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
+            width: 3rem;
+            height: 2rem;
             overflow: hidden;
             cursor: pointer;
         }
 
         .color-picker input[type="color"]::-webkit-color-swatch {
             border: none;
-            border-radius: 50%;
         }
 
         .color-picker input[type="color"]::-webkit-color-swatch-wrapper {
@@ -459,7 +463,10 @@ border-radius: 3px;
           } */
 
     }
+
+
     .related-icons{
+
         .card{
             background-color: rgb(248, 248, 248)!important;
             border-color: rgb(226, 226, 226);
@@ -507,50 +514,45 @@ border-radius: 3px;
     }
  }
 /* Center the spinner in the modal */
-#loadingSpinner .modal-dialog-centered {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-  }
-
-  #loadingSpinner .modal-content {
-    background-color: transparent;
-    border: none;
-    box-shadow: none;
-  }
-
-  #loadingSpinner .spinner-border {
-    width: 3rem; /* Default size for medium to large screens */
-    height: 3rem;
-    border-width: 0.25rem;
-  }
-
-  #loadingSpinner .spinner-border.text-primary {
-    color: #007bff; /* Adjust color if needed */
-  }
-
-  #loadingSpinner .spinner-border::before {
-    content: "";
-    display: block;
-    height: 100%;
+.spinner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
+    height: 100%;
+    background: rgba(43, 42, 42, 0.227);
+    display: none; /* Hidden by default */
+    z-index: 1100; /* Ensure it appears above other elements */
+    justify-content: center;
+    align-items: center;
+}
+
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+
+.loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 4px solid rgba(0, 0, 0, 0.1);
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(0, 123, 255, 0.25) 50%, transparent 50%);
-    animation: pulse 2s infinite;
-  }
+    border-top-color: #ffffff;
+    animation: spin 1s linear infinite;
+    display: none; /* Hide spinner by default */
+}
 
-  @keyframes pulse {
-    0%, 100% {
-      transform: scale(1);
-      opacity: 1;
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
     }
-    50% {
-      transform: scale(1.2);
-      opacity: 0.5;
+    100% {
+        transform: rotate(360deg);
     }
-  }
-
+}
 
 
 #search_css{
@@ -743,7 +745,7 @@ border-radius: 3px;
         display: block!important;
     }
     .footer{
-        margin-top: 11rem;
+        margin-top: 32.5rem;
     }
 }
 

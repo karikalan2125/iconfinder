@@ -29,6 +29,7 @@ class IconFinderController extends Controller
         if($request->ajax()){
             $all_icons = Icon::where('is_active', '0')
             ->where('is_deleted', '0')
+            ->where('license_id', '!=', 2)
             ->with(['style' => function ($query) {
                 $query->select('style_id', 'style_name', 'style_url_key');
             }])
@@ -45,6 +46,7 @@ class IconFinderController extends Controller
         }
             $all_icons = Icon::where('is_active', '0')
                     ->where('is_deleted', '0')
+                    ->where('license_id', '!=', 2)
                     ->with(['style' => function ($query) {
                         $query->select('style_id', 'style_name', 'style_url_key');
                     }])
@@ -52,6 +54,7 @@ class IconFinderController extends Controller
             $all_icons->getCollection()->transform(function ($icon) {
                 $icon->random_icons = Icon::where('is_active', '0')
                                         ->where('is_deleted', '0')
+                                        ->where('license_id', '!=', 2)
                                         ->inRandomOrder()
                                         ->take(4)
                                         ->get();
@@ -66,8 +69,8 @@ class IconFinderController extends Controller
     {
        $cat_slug= $request->slug;
        $sub_category=Category::where('category_url_key',$cat_slug)->where('is_active','0')->where('is_deleted','0')->first();
-       $Icon=Icon::where('category_id',$sub_category->category_id)->where('is_active','0')->where('is_deleted','0')->take(6)->get();
-       $Icon_count=Icon::where('category_id',$sub_category->category_id)->where('is_active','0')->where('is_deleted','0')->count();
+       $Icon=Icon::where('category_id',$sub_category->category_id)->where('is_active','0')->where('license_id', '!=', 2)->where('is_deleted','0')->take(6)->get();
+       $Icon_count=Icon::where('category_id',$sub_category->category_id)->where('license_id', '!=', 2)->where('is_active','0')->where('is_deleted','0')->count();
 
         return view('iconfinder/subcategory',compact('sub_category','Icon','Icon_count'));
     }
@@ -81,6 +84,7 @@ class IconFinderController extends Controller
         $iconsGroupedByCategory = Icon::where('style_id', $style_id ->style_id)
                                 ->where('is_active', '0')
                                 ->where('is_deleted', '0')
+                                ->where('license_id', '!=', 2)
                                 ->get()
                                 ->groupBy('category_id')
                                 ->map(function ($icons) {
@@ -104,7 +108,7 @@ class IconFinderController extends Controller
             $cat_slug = $request->input('cat_slug');
             $sub_category=Category::where('category_url_key',$cat_slug)->where('is_active','0')->where('is_deleted','0')->first();
 
-            $Icon_dtl=Icon::where('category_id',$sub_category->category_id)->where('is_active','0')->where('is_deleted','0');
+            $Icon_dtl=Icon::where('category_id',$sub_category->category_id)->where('license_id', '!=', 2)->where('is_active','0')->where('is_deleted','0');
 
             if($selected_license_val){
                 if($selected_license_val != "all"){
@@ -131,6 +135,7 @@ class IconFinderController extends Controller
             $relatedIcons = Icon::where('category_id', $sub_category->category_id)
                             ->where('is_active', '0')
                             ->where('is_deleted', '0')
+                            ->where('license_id', '!=', 2)
                             ->inRandomOrder()
                             ->take(20)
                             ->get();
@@ -141,13 +146,14 @@ class IconFinderController extends Controller
         $cat_slug= $request->cat_slug;
         // dd($cat_slug);
         $cat_id=Category::where('category_url_key',$cat_slug)->where('is_active','0')->where('is_deleted','0')->first();
-        $Icon_dtl=Icon::where('category_id',$cat_id->category_id)->where('is_active','0')->where('is_deleted','0')->first();
-        $relatedIcons = Icon::where('category_id', $cat_id->category_id)
-                            ->where('is_active', '0')
-                            ->where('is_deleted', '0')
-                            ->inRandomOrder()
-                            ->take(20)
-                            ->get();
+        $Icon_dtl=Icon::where('category_id',$cat_id->category_id)->where('license_id', '!=', 2)->where('is_active','0')->where('is_deleted','0')->first();
+        $relatedIcons = Icon::where('is_active', '0')
+        ->where('is_deleted', '0')
+        ->where('license_id', '!=', 2)
+        ->inRandomOrder()
+        ->take(20)
+        ->get();
+
 
         return view('iconfinder/detail',compact('Icon_dtl','relatedIcons','cat_slug','cat_id'));
     }
@@ -169,6 +175,7 @@ class IconFinderController extends Controller
                         $q2->where('category_name', 'LIKE', '%' . $query . '%');
                     });
                     })
+                    ->where('license_id', '!=', 2)
                     ->where('is_active', '0')
                     ->where('is_deleted', '0')
                     ->with(['sub_category' => function($query) {
@@ -204,13 +211,23 @@ class IconFinderController extends Controller
             return response()->json($html);
         }
 
+        $request->validate([
+            'search'=>'required|string'
+        ],
+        [
+            'search.required' => 'The search field is required.',
+
+        ]);
+
         $query = $request->input('search');
+
         $Icon_dtl = Icon::where(function($q) use ($query) {
             $q->where('icon_search_key', 'LIKE', '%' . $query . '%')
               ->orWhereHas('sub_category', function($q2) use ($query) {
                   $q2->where('category_name', 'LIKE', '%' . $query . '%');
               });
             })
+            ->where('license_id', '!=', 2)
             ->where('is_active', '0')
             ->where('is_deleted', '0')
             ->with(['sub_category' => function($query) {
@@ -220,6 +237,7 @@ class IconFinderController extends Controller
             // dd($Icon_dtl->icon_url);
         $relatedIcons = Icon::where('is_active', '0')
             ->where('is_deleted', '0')
+            ->where('license_id', '!=', 2)
             ->inRandomOrder()
             ->take(20)
             ->get();
@@ -462,6 +480,65 @@ class IconFinderController extends Controller
                         return back()->with('error', 'An error occurred while processing the image: ' . $e->getMessage());
                     }
             }
+    }
+
+    public function copylink(Request $request){
+        $url = $request->query('imgUrl');
+        $active_txt = (int) $request->query('active_txt');
+        $color = $request->query('color');
+
+        if (!$url) {
+            return response()->json(['error' => 'Image URL is required'], 400);
+        }
+
+        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+            return response()->json(['error' => 'Invalid Image URL'], 400);
+        }
+
+        try{
+            $contents = @file_get_contents($url);
+            if ($contents === false) {
+                return response()->json(['error' => 'Failed to retrieve image from URL'], 400);
+            }
+            if ($color && strpos($contents, '<svg') !== false){
+                $dom = new DOMDocument();
+                    libxml_use_internal_errors(true); // Suppress parsing errors for invalid SVG
+                    $dom->loadXML($contents);
+                    libxml_clear_errors();
+
+                            // Change the `fill` or `stroke` attributes to the desired color
+                    $svgElements = $dom->getElementsByTagName('svg');
+                    if ($svgElements->length > 0) {
+                        $svgElement = $svgElements->item(0);
+                        $svgElement->setAttribute('fill', $color); // Replace the color
+                    }
+
+                    $pathElements = $dom->getElementsByTagName('path');
+                    foreach ($pathElements as $path) {
+                        $path->setAttribute('fill', $color); // Replace `fill` color
+                        $path->setAttribute('stroke', $color); // Replace `stroke` color if needed
+                    }
+
+                    $contents = $dom->saveXML();
+            }
+            $name = basename(parse_url($url,PHP_URL_PATH));
+            $actualname = pathinfo($name, PATHINFO_FILENAME);
+
+            $directorypath = storage_path('app/public/copylink');
+            if (!file_exists($directorypath)) {
+                mkdir($directorypath, 0755, true);
+            }
+            $timestamp = now()->format('Ymd_His');
+            $outputpath = $directorypath . '/' . $actualname . '-' . $timestamp . '.svg';
+
+            file_put_contents($outputpath,$contents);
+
+            $publicurl = asset('storage/copylink/' . $actualname . '-' . $timestamp . '.svg');
+            return response()->json(['copy_link' => $publicurl], 200);
+        }
+        catch(Exception $e){
+            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+        }
     }
 
     public function fetch_svg(Request $request){

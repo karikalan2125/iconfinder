@@ -22,14 +22,14 @@
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                         @if(isset($category) && !empty($category))
                             @foreach ($category as $show_cat)
-                            <li><a class="dropdown-item {{Request::is('icons/category-set/' . $show_cat->category_url_key) ? 'active-link' : ''}} " href="{{ url('icons/category-set/' . $show_cat->category_url_key) }}">{{ $show_cat->category_name }}</a></li>
+                            <li><a class="dropdown-item {{ Request::is('icons/category-set/' . $show_cat->category_url_key . '/*') || Request::is('icons/category-set/' . $show_cat->category_url_key) ? 'active-link' : '' }} " href="{{ url('icons/category-set/' . $show_cat->category_url_key) }}">{{ $show_cat->category_name }}</a></li>
                             @endforeach
                             @else
                                 <li><a class="dropdown-item" href="">No Categories</a></li>
                         @endif
                         </ul>
                     </div>
-                    <div class="dropdown">
+                    {{-- <div class="dropdown">
                         <button class="btn dropdown-toggle nav-item {{ request()->is('icons/style-set/*') ? 'active-link' : '' }}" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                             Styles
                         </button>
@@ -42,7 +42,7 @@
                                 <li><a class="dropdown-item" href="">No Categories</a></li>
                         @endif
                         </ul>
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="jkfrjhqwd text-end" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight">
                     <i class="fa fa-bars" aria-hidden="true"></i>
@@ -67,14 +67,14 @@
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
             @if(isset($category) && !empty($category))
                 @foreach ($category as $show_cat)
-                <li><a class="dropdown-item {{Request::is('icons/category-set/' . $show_cat->category_url_key) ? 'active-link' : ''}} " href="{{ url('icons/category-set/' . $show_cat->category_url_key) }}">{{ $show_cat->category_name }}</a></li>
+                <li><a class="dropdown-item {{ Request::is('icons/category-set/' . $show_cat->category_url_key . '/*') || Request::is('icons/category-set/' . $show_cat->category_url_key) ? 'active-link' : '' }} " href="{{ url('icons/category-set/' . $show_cat->category_url_key) }}">{{ $show_cat->category_name }}</a></li>
                 @endforeach
                 @else
                     <li><a class="dropdown-item" href="">No Categories</a></li>
             @endif
             </ul>
         </div>
-        <div class="dropdown">
+        {{-- <div class="dropdown">
             <button class="btn dropdown-toggle {{ request()->is('icons/style-set/*') ? 'active-link' : '' }}" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                 Styles
             </button>
@@ -87,6 +87,6 @@
                     <li><a class="dropdown-item" href="">No Categories</a></li>
             @endif
             </ul>
-        </div>
+        </div> --}}
   </div>
 </div>

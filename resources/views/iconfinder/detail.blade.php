@@ -46,9 +46,9 @@
                                     <div class="col-xl-7 col-lg-7 col-md-8 col-sm-8 col-12 align-self-center">
                                         <h5 id="modal-icon-name" class="text-secondary fw-bold pb-4"></h5>
                                         <div class="row">
-                                            <div class="d-flex justify-content-between align-items-center py-3 w-100">
+                                            <div class="d-block d-lg-flex px-5 justify-content-between align-items-center gap-sm-2 gap-lg-3 py-2 w-100">
                                                 <!-- Size Control -->
-                                                <div class="size-control d-flex justify-content-center align-items-center gap-3">
+                                                <div class="size-control d-flex justify-content-center py-3 align-items-center gap-3">
                                                     <button class="btn btn-outline-secondary" id="decrease" onclick="changeSize(-16)">-</button>
                                                     <span id="size-display" class="fw-bold">256px</span>
                                                     <button class="btn btn-outline-secondary" id="increase" onclick="changeSize(16)">+</button>
@@ -66,25 +66,29 @@
                                         <div class="d-flex gap-3 pt-3" id="downloadicons">
                                             <div class="card cardd border-0 py-2 rounded-0 cursor" id="downloadpng">
                                                 <div class="d-flex text-white justify-content-center">
-                                                    <i class="fa-solid fa-file-image"></i>
+                                                    <i class="fa-solid fa-file-image" id="pngicon" ></i>
+                                                    <div id="pngloadingSpinner" class="loading-spinner"></div>
                                                     <span class="ps-2 font-sz">DOWNLOAD AS PNG</span>
                                                 </div>
                                             </div>
                                             <div class="card cardd border-0 py-2 rounded-0 cursor" id="downloadjpeg">
                                                 <div class="d-flex text-white justify-content-center">
-                                                    <i class="fa-solid fa-file-image"></i>
+                                                    <i class="fa-solid fa-file-image" id="jpegicon" ></i>
+                                                    <div id="jpegloadingSpinner" class="loading-spinner"></div>
                                                     <span class="ps-2 font-sz">DOWNLOAD AS JPEG</span>
                                                 </div>
                                             </div>
                                             <div class="card cardd border-0 py-2 rounded-0 cursor" id="downloadsvg" data-icon-name="{{ $Icon_dtl->icon_name }}" data-img="{{ $Icon_dtl->icon_url }}">
                                                 <div class="d-flex text-white justify-content-center">
-                                                    <i class="fas fa-download"></i>
+                                                    <i class="fas fa-download" id="svgicon" ></i>
+                                                    <div id="svgloadingSpinner" class="loading-spinner"></div>
                                                     <span class="ps-2 font-sz">DOWNLOAD AS SVG</span>
                                                 </div>
                                             </div>
-                                            <div class="card  cardd border-0 py-2 rounded-0 cursor" onclick="copyImageURL('{{ $Icon_dtl->icon_url }}')">
+                                            <div class="card  cardd border-0 py-2 rounded-0 cursor" id="copylink" >
                                                 <div class="d-flex text-white justify-content-center">
-                                                    <i class="fa-regular fa-copy"></i>
+                                                    <i class="fa-regular fa-copy" id="copyicon" ></i>
+                                                    <div id="loadingSpinner" class="loading-spinner"></div>
                                                     <span class="ps-2 font-sz">COPY LINK</span>
                                                 </div>
                                             </div>
@@ -102,7 +106,10 @@
                                             <div class="align-self-center">
                                                 <img src="{{ $relatedIcon->icon_url }}" alt="" class="">
                                             </div>
-                                            <h6 class="pt-4 text-center">{{ $relatedIcon->icon_name }}</h6>
+                                            <h6 class="pt-4 text-center"
+                                            title="{{ strlen($relatedIcon->icon_name) > 10 ? $relatedIcon->icon_name : '' }}">
+                                            {{ strlen($relatedIcon->icon_name) > 10 ? Str::limit($relatedIcon->icon_name, 10, '...') : $relatedIcon->icon_name }}
+                                        </h6>
                                         </div>
                                     </div>
                                     @endforeach
@@ -115,17 +122,14 @@
         </div>
     </div>
 </section>
-<div id="loadingSpinner" class="modal fade" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content border-0 bg-transparent">
-        <div class="d-flex justify-content-center p-5">
-          <div class="spinner-border text-primary" role="status">
+<div id="loadingSpinnerOverlay" class="spinner-overlay">
+    <div class="spinner-container">
+        <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">Loading...</span>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
+
   <div id = "loading_indicator"> </div>
 @endsection
 @section('customscript')

@@ -115,12 +115,12 @@
                     Free
                 </label>
             </div>
-            <div class="form-check">
+            {{-- <div class="form-check">
                 <input class="form-check-input" type="radio" name="License" id="License3" >
                 <label class="form-check-label" for="License3">
                     Premium
                 </label>
-            </div>
+            </div> --}}
         </div>
     </div>
     <div>

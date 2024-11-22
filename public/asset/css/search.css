@@ -1,3 +1,10 @@
+.scroll-bdy{
+    overflow-y: scroll;
+    height: 130vh;
+}
+.scroll-bdy::-webkit-scrollbar {
+    display: none;
+}
 .modal-body{
     #size {
          display: flex;
@@ -182,16 +189,14 @@
          appearance: none;
          -webkit-appearance: none;
          border: none;
-         width: 50px;
-         height: 50px;
-         border-radius: 50%;
+         width: 3rem;
+         height: 2rem;
          overflow: hidden;
          cursor: pointer;
      }
 
      .color-picker input[type="color"]::-webkit-color-swatch {
          border: none;
-         border-radius: 50%;
      }
 
      .color-picker input[type="color"]::-webkit-color-swatch-wrapper {
